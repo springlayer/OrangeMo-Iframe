@@ -5,7 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-touch-fullscreen" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,6 +13,373 @@
 	<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="../../css/style.min.css">
 </head>
+<style>
+	/* 图标动画 */
+	.animations-box .badge {
+		position: absolute;
+		top: -10px;
+		left: 12px;
+		border-radius: 50%;
+		box-shadow: 0 0 0 rgba(var(--bs-danger-rgb), 0.9);
+		animation: pulse-danger 2s infinite;
+	}
+
+	.dot {
+		display: block;
+		position: absolute;
+		top: -0.5rem;
+		right: -0.1rem;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #22c03c;
+		cursor: pointer;
+		box-shadow: 0 0 0 rgba(var(--bs-success-rgb), 0.9);
+		animation: pulse-success 2s infinite;
+	}
+
+	@-webkit-keyframes pulse-success {
+		0% {
+			-webkit-box-shadow: 0 0 0 0 rgba(var(--bs-success-rgb), 0.9);
+		}
+
+		70% {
+			-webkit-box-shadow: 0 0 0 10px rgba(var(--bs-success-rgb), 0);
+		}
+
+		100% {
+			-webkit-box-shadow: 0 0 0 0 rgba(var(--bs-success-rgb), 0);
+		}
+	}
+
+	@keyframes pulse-success {
+		0% {
+			-moz-box-shadow: 0 0 0 0 rgba(var(--bs-success-rgb), 0.9);
+			box-shadow: 0 0 0 0 rgba(var(--bs-success-rgb), 0.7);
+		}
+
+		70% {
+			-moz-box-shadow: 0 0 0 10px rgba(var(--bs-success-rgb), 0);
+			box-shadow: 0 0 0 10px rgba(var(--bs-success-rgb), 0);
+		}
+
+		100% {
+			-moz-box-shadow: 0 0 0 0 rgba(var(--bs-success-rgb), 0);
+			box-shadow: 0 0 0 0 rgba(var(--bs-success-rgb), 0);
+		}
+	}
+
+	@-webkit-keyframes pulse-danger {
+		0% {
+			-webkit-box-shadow: 0 0 0 0 rgba(var(--bs-danger-rgb), 0.9);
+		}
+
+		70% {
+			-webkit-box-shadow: 0 0 0 10px rgba(var(--bs-danger-rgb), 0);
+		}
+
+		100% {
+			-webkit-box-shadow: 0 0 0 0 rgba(var(--bs-danger-rgb), 0);
+		}
+	}
+
+	@keyframes pulse-danger {
+		0% {
+			-moz-box-shadow: 0 0 0 0 rgba(var(--bs-danger-rgb), 0.9);
+			box-shadow: 0 0 0 0 rgba(var(--bs-danger-rgb), 0.7);
+		}
+
+		70% {
+			-moz-box-shadow: 0 0 0 10px rgba(var(--bs-danger-rgb), 0);
+			box-shadow: 0 0 0 10px rgba(var(--bs-danger-rgb), 0);
+		}
+
+		100% {
+			-moz-box-shadow: 0 0 0 0 rgba(var(--bs-danger-rgb), 0);
+			box-shadow: 0 0 0 0 rgba(var(--bs-danger-rgb), 0);
+		}
+	}
+
+	.bell-animations {
+		display: inline-block;
+		-webkit-animation: ring 4s .7s ease-in-out infinite;
+		-webkit-transform-origin: 50% 4px;
+		-moz-animation: ring 4s .7s ease-in-out infinite;
+		-moz-transform-origin: 50% 4px;
+		animation: ring 4s .7s ease-in-out infinite;
+		transform-origin: 50% 4px;
+	}
+
+	@-webkit-keyframes ring {
+		0% {
+			-webkit-transform: rotateZ(0);
+		}
+
+		1% {
+			-webkit-transform: rotateZ(30deg);
+		}
+
+		3% {
+			-webkit-transform: rotateZ(-28deg);
+		}
+
+		5% {
+			-webkit-transform: rotateZ(34deg);
+		}
+
+		7% {
+			-webkit-transform: rotateZ(-32deg);
+		}
+
+		9% {
+			-webkit-transform: rotateZ(30deg);
+		}
+
+		11% {
+			-webkit-transform: rotateZ(-28deg);
+		}
+
+		13% {
+			-webkit-transform: rotateZ(26deg);
+		}
+
+		15% {
+			-webkit-transform: rotateZ(-24deg);
+		}
+
+		17% {
+			-webkit-transform: rotateZ(22deg);
+		}
+
+		19% {
+			-webkit-transform: rotateZ(-20deg);
+		}
+
+		21% {
+			-webkit-transform: rotateZ(18deg);
+		}
+
+		23% {
+			-webkit-transform: rotateZ(-16deg);
+		}
+
+		25% {
+			-webkit-transform: rotateZ(14deg);
+		}
+
+		27% {
+			-webkit-transform: rotateZ(-12deg);
+		}
+
+		29% {
+			-webkit-transform: rotateZ(10deg);
+		}
+
+		31% {
+			-webkit-transform: rotateZ(-8deg);
+		}
+
+		33% {
+			-webkit-transform: rotateZ(6deg);
+		}
+
+		35% {
+			-webkit-transform: rotateZ(-4deg);
+		}
+
+		37% {
+			-webkit-transform: rotateZ(2deg);
+		}
+
+		39% {
+			-webkit-transform: rotateZ(-1deg);
+		}
+
+		41% {
+			-webkit-transform: rotateZ(1deg);
+		}
+
+		43% {
+			-webkit-transform: rotateZ(0);
+		}
+
+		100% {
+			-webkit-transform: rotateZ(0);
+		}
+	}
+
+	/* 背景动画 */
+	.wave {
+		background-color: #f9fafb;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.wave>div {
+		z-index: 1;
+	}
+
+	.wave:before {
+		content: ' ';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #ffffff;
+		z-index: -1;
+	}
+
+	.wave:after {
+		content: ' ';
+		width: 1000px;
+		height: 1025px;
+		position: absolute;
+		bottom: 65%;
+		left: -250px;
+		border-radius: 35%;
+		background: white;
+		z-index: 0;
+	}
+
+	.wave:after {
+		-webkit-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+
+	.wave-animate:after {
+		-webkit-animation: animate-wave 15s infinite linear;
+		animation: animate-wave 15s infinite linear;
+	}
+
+	.wave-animate-slower:after {
+		-webkit-animation: animate-wave 30s infinite linear;
+		animation: animate-wave 30s infinite linear;
+	}
+
+	.wave-animate-slow:after {
+		-webkit-animation: animate-wave 25s infinite linear;
+		animation: animate-wave 25s infinite linear;
+	}
+
+	.wave-animate-fast:after {
+		-webkit-animation: animate-wave 10s infinite linear;
+		animation: animate-wave 10s infinite linear;
+	}
+
+	.wave-animate-faster:after {
+		-webkit-animation: animate-wave 5s infinite linear;
+		animation: animate-wave 5s infinite linear;
+	}
+
+	.wave.wave-primary {
+		background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+	}
+
+	.wave.wave-primary .svg-icon svg g [fill] {
+		fill: var(--bs-primary);
+	}
+
+	.wave.wave-secondary {
+		background-color: rgba(var(--bs-secondary-rgb), 0.1) !important;
+	}
+
+	.wave.wave-secondary .svg-icon svg g [fill] {
+		fill: var(--bs-secondary);
+	}
+
+	.wave.wave-success {
+		background-color: rgba(var(--bs-success-rgb), 0.1) !important;
+	}
+
+	.wave.wave-success .svg-icon svg g [fill] {
+		fill: var(--bs-success);
+	}
+
+	.wave.wave-info {
+		background-color: rgba(var(--bs-info-rgb), 0.1) !important;
+	}
+
+	.wave.wave-info .svg-icon svg g [fill] {
+		fill: var(--bs-info);
+	}
+
+	.wave.wave-warning {
+		background-color: rgba(var(--bs-warning-rgb), 0.1) !important;
+	}
+
+	.wave.wave-warning .svg-icon svg g [fill] {
+		fill: var(--bs-warning);
+	}
+
+	.wave.wave-danger {
+		background-color: rgba(var(--bs-danger-rgb), 0.1) !important;
+	}
+
+	.wave.wave-danger .svg-icon svg g [fill] {
+		fill: var(--bs-danger);
+	}
+
+	.wave.wave-light {
+		background-color: rgba(var(--bs-light-rgb), 0.1) !important;
+	}
+
+	.wave.wave-light .svg-icon svg g [fill] {
+		fill: var(--bs-light);
+	}
+
+	.wave.wave-dark {
+		background-color: rgba(var(--bs-dark-rgb), 0.1) !important;
+	}
+
+	.wave.wave-dark .svg-icon svg g [fill] {
+		fill: var(--bs-dark);
+	}
+
+	.wave.wave-white {
+		background-color: rgba(var(--bs-white-rgb), 0.1) !important;
+	}
+
+	.wave.wave-white .svg-icon svg g [fill] {
+		fill: var(--bs-white);
+	}
+
+	@-webkit-keyframes animate-wave {
+		from {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+
+		to {
+			-webkit-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+	}
+
+	@keyframes animate-wave {
+		from {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+
+		to {
+			-webkit-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+	}
+
+	/* 动画css库演示 */
+	#myTabContent li {
+		margin: 10px 10px 0 0;
+		padding: 5px 10px;
+		background-color: #eee;
+		cursor: pointer;
+	}
+
+	#myTabContent li.active {
+		color: var(--bs-primary);
+	}
+</style>
 
 <body>
 	<div class="container-fluid">
@@ -20,57 +387,45 @@
 		<div class="row">
 
 			<div class="col-md-6 col-xl-3">
-				<div class="card bg-primary text-white">
-					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
-								<i class="mdi mdi-currency-cny fs-4"></i>
-							</span>
-							<span class="fs-4">102,125.00</span>
-						</div>
-						<div class="text-end">今日收入</div>
+				<div class="card wave wave-animate-slow wave-primary">
+					<div class="card-body position-relative">
+						<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+							<i class="mdi mdi-account fs-4"></i>
+						</span>
+						<p>诗曰：枉去扶余借救兵，苏文难获大唐君。</p>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-md-6 col-xl-3">
-				<div class="card bg-danger text-white">
-					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
-								<i class="mdi mdi-account fs-4"></i>
-							</span>
-							<span class="fs-4">920,000</span>
-						</div>
-						<div class="text-end">用户总数</div>
+				<div class="card wave wave-animate wave-danger">
+					<div class="card-body position-relative">
+						<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+							<i class="mdi mdi-arrow-down-bold fs-4"></i>
+						</span>
+						<p>诗曰：枉去扶余借救兵，苏文难获大唐君。</p>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-md-6 col-xl-3">
-				<div class="card bg-success text-white">
-					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
-								<i class="mdi mdi-arrow-down-bold fs-4"></i>
-							</span>
-							<span class="fs-4">34,005,000</span>
-						</div>
-						<div class="text-end">下载总量</div>
+				<div class="card wave wave-animate-slow wave-animate-slower">
+					<div class="card-body position-relative">
+						<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+							<i class="mdi mdi-account fs-4"></i>
+						</span>
+						<p>诗曰：枉去扶余借救兵，苏文难获大唐君。</p>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-md-6 col-xl-3">
-				<div class="card bg-purple text-white">
-					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
-								<i class="mdi mdi-comment-outline fs-4"></i>
-							</span>
-							<span class="fs-4">153 条</span>
-						</div>
-						<div class="text-end">新增留言</div>
+				<div class="card wave wave-animate wave-success">
+					<div class="card-body position-relative">
+						<span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+							<i class="mdi mdi-arrow-down-bold fs-4"></i>
+						</span>
+						<p>诗曰：枉去扶余借救兵，苏文难获大唐君。</p>
 					</div>
 				</div>
 			</div>

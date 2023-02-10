@@ -59,6 +59,7 @@
 									<span class="btn btn-primary me-1" onclick="sousuo()">搜索</span>
 									<button type="reset" class="btn btn-default">重置</button>
 								</div>
+
 							</div>
 						</form>
 						<div id="toolbar" class="toolbar-btn-action">
@@ -167,13 +168,11 @@
 				formatter: function (value, row, index) {
 					var value = "";
 					if (row.status == '0') {
-						value = '<span class="badge bg-success">正常</span>';
+						value = 'checked';
 					} else if (row.status == '1') {
-						value = '<span class="badge bg-danger">禁用</span>';
-					} else {
-						value = '<span class="badge bg-secondary">未知</span>';
+						value = '';
 					}
-					return value;
+					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
 				}
 			}, {
 				field: 'operate',
@@ -288,13 +287,14 @@
 				},
 				onLoadSuccess: function (data) {
 				},
-
+				formatLoadingMessage: function formatLoadingMessage() {
+					return '<p style="font-size: 15px; color: black;">正在努力地加载数据中，请稍候</p>';
+				},
 				columns,
 				onLoadSuccess: function (data) {
 					$("[data-bs-toggle='tooltip']").tooltip();
 				}
 			});
-
 		}
 
 		function buildData(data) {
