@@ -63,8 +63,8 @@
             <button class="btn btn-primary" type="submit">立即登录</button>
           </div>
         </form>
-        <p class="text-center text-muted mt-3">Copyright © 2023 <a target="_blank"
-            href="http://www.bixiaguangnian.com">山西橙墨科技有限公司</a>. All right reserved</p>
+        <p class="text-center text-muted mt-3">Copyright © 2023 <a target="_blank" href="#">山西橙墨科技有限公司</a>. All right
+          reserved</p>
       </div>
     </div>
   </div>
@@ -95,12 +95,16 @@
       }
 
       var $data = $(this).serialize();
-      var username = document.getElementById("username").value;
-      var password = document.getElementById("password").value;
 
+      var params = {
+        loginName: document.getElementById("username").value,
+        password: document.getElementById("password").value
+      }
       $.ajax({
-        url: baseUrl + "/login?username=" + username + "&password=" + password,
-        type: "GET",
+        url: baseUrl + "/login",
+        data: JSON.stringify(params),
+        headers: { 'Content-Type': 'application/json' },
+        type: "POST",
         success: function (data) {
           window.localStorage.setItem("token", data.data);
           location.href = '../index/index.html';
@@ -111,6 +115,11 @@
       });
       return false;
     });
+    window.addEventListener("message", function (e) {
+      if (e.data.reload) {
+        window.location.reload()
+      }
+    })
   </script>
 </body>
 
