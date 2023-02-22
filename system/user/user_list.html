@@ -14,7 +14,7 @@
 	<!--表格插件css-->
 	<link rel="stylesheet" href="../../js/bootstrap-table/bootstrap-table.min.css">
 	<link rel="stylesheet" type="text/css" href="../../css/style.min.css">
-	<link rel="stylesheet" type="text/css" href="../../css/jstree/style.min.css">
+	<link rel="stylesheet" type="text/css" href="../../jstree/style.min.css">
 	<link rel="stylesheet" type="text/css" href="../../js/cropper/cropper.min.css">
 	<link rel="stylesheet" type="text/css" href="../../js/jquery-confirm/jquery-confirm.min.css">
 
@@ -332,7 +332,7 @@
 	<!--表格插件js-->
 	<script src="../../js/bootstrap-table/bootstrap-table.js"></script>
 	<script src="../../js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-	<script src="../../js/jstree/jstree.min.js"></script>
+	<script src="../../jstree/jstree.min.js"></script>
 	<script src="../../js/globalConfig.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/cropper/cropper.min.js"></script>
 	<script type="text/javascript" src="../../js/lyear-loading.js"></script>
@@ -366,7 +366,7 @@
 
 		// 操作方法 - 编辑
 		function editUser(userId) {
-			$('#newsModal').find('.modal-title span').text('用户修改');
+			$('#newsModal').find('.modal-title span').text('用户编辑');
 			newsModal = new bootstrap.Modal($('#newsModal').get(0), {
 				keyboard: false,
 				backdrop: 'static',
@@ -705,7 +705,6 @@
 		}
 
 
-
 		/**
 		  * 关闭按钮
 		*/
@@ -804,7 +803,6 @@
 				}
 			},
 			isImageFile: function (file) {
-				console.log(file + "111")
 				// 判断是否图片格式
 				if (file.type) {
 					return /^image\/\w+$/.test(file.type);
@@ -995,7 +993,7 @@
 												type: "GET",
 												headers: { 'Authorization': token },
 												success: function (data) {
-													loadTable("");
+													$('#table').bootstrapTable('refresh');
 												},
 												error: function (data) {
 													responseError(data);

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+	<link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-touch-fullscreen" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<link rel="stylesheet" type="text/css" href="../../css/materialdesignicons.min.css">
+	<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+	<!--表格插件css-->
+	<link rel="stylesheet" href="../../js/bootstrap-table/bootstrap-table.min.css">
+	<link rel="stylesheet" type="text/css" href="../../css/style.min.css">
+	<link rel="stylesheet" type="text/css" href="../../jstree/style.min.css">
+	<link rel="stylesheet" type="text/css" href="../../js/jquery-confirm/jquery-confirm.min.css">
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="card">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-body">
+						<form class="search-form" method="get" action="#!" role="form">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="row">
+										<label class="col-sm-4 col-form-label">
+											角色名称</label>
+										<div class="col-sm-8">
+											<input type="text" class="form-control pull-left" id="sou-rolename"
+												name="sou-rolename" placeholder="请输入角色名称" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<span class="btn btn-primary me-1" onclick="sousuo()">搜索</span>
+									<button type="reset" class="btn btn-default">重置</button>
+								</div>
+
+							</div>
+						</form>
+						<div id="toolbar" class="toolbar-btn-action">
+							<button id="add-btn" type="button" class="btn btn-primary me-1">
+								<span class="mdi mdi-plus" aria-hidden="true"></span> 新增
+							</button>
+							<button id="remove-btn2" type="button" class="btn btn-danger">
+								<span class="mdi mdi-window-close" aria-hidden="true"></span>删除
+							</button>
+						</div>
+						<table id="table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Start 模态框-->
+	<div class="modal fade" id="newsModal">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<form action="/news/save" method="post" class="save-form" novalidate>
+					<div class="modal-header">
+						<h6 class="modal-title"><span>角色新增</span></h6>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="mb-3 col-md-12">
+									<label for="title" class="form-label">角色名称</label>
+									<input type="text" class="form-control" id="roleName" name="roleName" value="111"
+										placeholder="请输入角色名称" required />
+									<div class="invalid-feedback">请填写角色名称</div>
+								</div>
+
+								<div class="mb-3 col-md-12">
+									<label for="seo_keywords" class="form-label">角色标识</label>
+									<input type="text" class="form-control" id="roleKey" name="roleKey" value=""
+										placeholder="请输入角色标识" required />
+									<div class="invalid-feedback">请填写角色标识</div>
+								</div>
+
+								<div class="mb-3 col-md-12">
+									<label for="seo_keywords" class="form-label">角色排序</label>
+									<input type="text" class="form-control" id="roleSort" name="roleSort" value=""
+										placeholder="请输入角色排序" required />
+									<div class="invalid-feedback">请填写角色排序</div>
+								</div>
+							</div>
+
+							<div class="mb-3 col-md-12">
+								<label for="content" class="form-label">备注</label>
+								<textarea class="form-control" id="remark" name="remark" rows="3" value=""
+									placeholder="备注"></textarea>
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="modal-footer">
+					<input type="hidden" name="id" id="news_id" value="" />
+					<button type="button" class="btn btn-secondary close-btn">关闭</button>
+					<button type="submit" class="btn btn-primary save-btn">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="delId" value="">
+	<input type="hidden" id="roleId" value="">
+	<div class="modal fade" id="menuModal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h6 class="modal-title" id="image-modal-label">角色授权</h6>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+						id="menuzTree"></button>
+				</div>
+				<div class="card-body">
+					<div id="menu-tree"></div>
+				</div>
+				<div class="modal-body">
+					<div class="image-body">
+						<div class="modal-footer">
+							<input type="hidden" name="id" id="news_id" value="" />
+							<button type="button" class="btn btn-secondary close-btn-menu"
+								aria-label="Close">关闭</button>
+							<button type="submit" class="btn btn-primary save-btn-menu">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+
+	<script type="text/javascript" src="../../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/popper.min.js"></script>
+	<script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../../js/main.min.js"></script>
+	<!--表格插件js-->
+	<script src="../../js/bootstrap-table/bootstrap-table.js"></script>
+	<script src="../../js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script src="../../jstree/jstree.min.js"></script>
+	<script type="text/javascript" src="../../js/lyear-loading.js"></script>
+	<script type="text/javascript" src="../../js/bootstrap-notify.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery-confirm/jquery-confirm.min.js"></script>
+	<script src="../../js/globalConfig.js" type="text/javascript"></script>
+
+	<script type="text/javascript" src="../../js/perfect-scrollbar.min.js"></script>
+	<!-- 表单列表逻辑 -->
+
+	<script>
+
+		var newsModal; // 模态框
+
+		/**
+		 * 绑定模态框隐藏事件
+		 */
+		$('#newsModal').get(0).addEventListener('hidden.bs.modal', function (event) {
+			$('.save-form').removeClass('was-validated');
+			$('.save-form').get(0).reset();
+			$('#news_id').val("");
+		})
+
+		/**
+		 * 新增按钮
+		 */
+		$(document).on('click', '#add-btn', function () {
+			$('#newsModal').find('.modal-title span').text('角色新增');
+			newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+				keyboard: false,
+				backdrop: 'static',
+			});
+			$('#roleKey').removeAttr("disabled");
+			$('#roleId').val("");
+			newsModal.show();
+		});
+
+		// 操作方法 - 编辑
+		function editRole(roleKey, roleName, roleSort, roleId, remark) {
+			$('#newsModal').find('.modal-title span').text('角色编辑');
+			newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+				keyboard: false,
+				backdrop: 'static',
+			});
+			$("#roleKey").attr("disabled", "disabled");
+			$("#roleKey").val(roleKey),
+				$("#roleName").val(roleName),
+				$("#roleSort").val(roleSort),
+				$("#roleId").val(roleId),
+				$("#remark").val(remark)
+			newsModal.show();
+		}
+
+		// 操作方法 - 授权
+		function aclRole(menuIds) {
+			console.log(menuIds)
+			$('#menuModal').find('.modal-title span').text('角色授权');
+			menuModal = new bootstrap.Modal($('#menuModal').get(0), {
+				keyboard: false,
+				backdrop: 'static',
+			});
+			$('#menu-tree').jstree('destroy');
+			$('#menu-tree').jstree({
+				'themes': {
+					'responsive': false
+				},
+				'core': {
+					'data': function (obj, callback) {
+						$.ajax({
+							url: baseUrl + "/admin/sys/menu/ztree",
+							type: "GET",
+							headers: { 'Authorization': token },
+							success: function (data) {
+								var danger = buildData(data.data, menuIds, true)
+								callback.call(this, danger);
+							},
+							error: function (data) {
+								responseError(data);
+							}
+						});
+					}
+				},
+				'plugins': ['types', 'checkbox'],
+			})
+			menuModal.show();
+		}
+
+		/**
+	  * 关闭按钮
+	*/
+		$(document).on('click', '.close-btn-menu', function () {
+			menuModal.hide();
+		});
+
+
+		$(document).on('click', '.save-btn-menu', function () {
+			var selectNode = $('#menu-tree').jstree(true).get_selected(true);
+			var arrey = []
+			$.each(selectNode, function (index, domEle) {
+				arrey.push(domEle.id);
+			})
+			var params = {
+				roleId: $("#roleId").val(),
+				menuIds: arrey
+			}
+			console.log(params)
+			$.ajax({
+				url: baseUrl + "/admin/sys/role/acl",
+				type: "POST",
+				data: JSON.stringify(params),
+				headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+				success: function (data) {
+					if (data.code = '200') {
+						showNotify("分配成功", 'success', 3000);
+						$('#table').bootstrapTable('refresh');
+						menuModal.hide();
+					}
+				},
+				error: function (data) {
+					loader.destroy();
+					responseError(data);
+				}
+			});
+		});
+		/**
+			 * 保存按钮
+			 */
+		$(document).on('click', '.save-btn', function (event) {
+			var form = $('.save-form');
+			var self = $(this);
+
+			// 这里只做不为空的验证
+			form.get(0).classList.add('was-validated');
+			if (!form.get(0).checkValidity()) {
+				event.preventDefault();
+				event.stopPropagation();
+				return false;
+			}
+			// self.attr('autocomplete', 'off').prop('disabled', true);
+			var loader = $('body').lyearloading({
+				opacity: 0.2,
+				spinnerSize: 'lg'
+			});
+
+			var params = {
+				roleId: $("#roleId").val(),
+				roleName: $("#roleName").val(),
+				roleKey: $("#roleKey").val(),
+				roleSort: $("#roleSort").val(),
+				remark: $("#remark").val()
+			}
+
+			$.ajax({
+				url: baseUrl + "/admin/sys/role/createOrUpdate",
+				type: "POST",
+				data: JSON.stringify(params),
+				headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+				success: function (data) {
+					loader.destroy();
+					$('#table').bootstrapTable('refresh');
+					// loaderTable();
+					newsModal.hide();
+				},
+				error: function (data) {
+					loader.destroy();
+					responseError(data);
+				}
+			});
+		});
+
+
+		function sousuo() {
+			var roleName = $("#sou-rolename").val();
+			loaderTable(roleName);
+		}
+
+
+		$(function () {
+			loaderTable();
+		});
+
+		function loaderTable(roleName) {
+			/**
+			 * 分页相关的配置
+			 **/
+			const pagination = {
+				// 分页方式：[client] 客户端分页，[server] 服务端分页
+				sidePagination: "server",
+				// 初始化加载第一页，默认第一页
+				pageNumber: 1,
+				// 每页的记录行数
+				pageSize: 10,
+				// 可供选择的每页的行数 - (亲测大于1000存在渲染问题)
+				pageList: [5, 10, 25, 50, 100],
+				// 在上百页的情况下体验较好 - 能够显示首尾页
+				paginationLoop: true,
+				// 展示首尾页的最小页数
+				paginationPagesBySide: 2
+			};
+
+			/**
+			 * 按钮相关配置
+			 **/
+			const button = {
+				// 按钮的类
+				buttonsClass: 'default',
+				// 类名前缀
+				buttonsPrefix: 'btn'
+			}
+
+			/**
+			 * 图标相关配置
+			 **/
+			const icon = {
+				// 图标前缀
+				iconsPrefix: 'mdi',
+				// 图标大小
+				iconSize: 'mini',
+				// 图标的设置
+				icons: {
+					paginationSwitchDown: 'mdi-door-closed',
+					paginationSwitchUp: 'mdi-door-open',
+					refresh: 'mdi-refresh',
+					toggleOff: 'mdi-toggle-switch-off',
+					toggleOn: 'mdi-toggle-switch',
+					columns: 'mdi-table-column-remove',
+					detailOpen: 'mdi-plus',
+					detailClose: 'mdi-minus',
+					fullscreen: 'mdi-monitor-screenshot',
+					search: 'mdi-table-search',
+					clearSearch: 'mdi-trash-can-outline'
+				}
+			};
+
+			/**
+			 * 用于演示的列信息
+			 **/
+			const columns = [{
+				field: 'example',
+				checkbox: true,
+				// 列的宽度
+				width: 5,
+				// 宽度单位
+				widthUnit: 'rem'
+			}, {
+				field: 'roleName',
+				align: 'center',
+				title: '角色名称',
+				titleTooltip: '角色名称'
+			}, {
+				field: 'roleKey',
+				align: 'center',
+				title: '角色标识',
+			}, {
+				field: 'roleSort',
+				align: 'center',
+				title: '角色排序'
+			}, {
+				field: 'status',
+				title: '状态',
+				formatter: function (value, row, index) {
+					var value = "";
+					if (row.status == '1') {
+						value = 'checked';
+					} else if (row.status == '0') {
+						value = '';
+					}
+					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+				}
+			}, {
+				field: 'operate',
+				title: '操作',
+				align: 'center',
+				formatter: btnGroup,  // 自定义方法
+				events: {
+					'click .edit-btn': function (event, value, row, index) {
+						event.stopPropagation();
+						editRole(row.roleKey, row.roleName, row.roleSort, row.roleId, row.remark);
+					},
+					'click #remove-btn': function (event, value, row, index) {
+						event.stopPropagation();
+						$("#delId").val(row.roleId)
+					},
+					'click .acl-btn': function (event, value, row, index) {
+						event.stopPropagation();
+						$("#roleId").val(row.roleId)
+						aclRole(row.menuIds);
+					},
+					'click #js-create-tab': function (event, value, row, index) {
+						// document.getElementsByClassName('tab-pane ').contentWindow.postMessage("Hello", "*");
+					}
+				}
+			}];
+
+			// 自定义操作按钮
+			function btnGroup() {
+				let html =
+					'<button  class="btn btn-sm btn-default me-1 edit-btn" title="编辑" data-bs-toggle="tooltip"><i class="mdi mdi-pencil"></i></button>' +
+					'<button  class="btn btn-sm btn-default me-1 acl-btn" title="角色授权" data-bs-toggle="tooltip"><i class="mdi mdi-axe-battle"></i></button>' +
+					'<button  class="btn btn-sm btn-default me-1 acl-user-btn" id="js-create-tab" data-title="角色人员" data-url="/system/acl/aclUser.html" title="角色人员" data-bs-toggle="tooltip"><i class="mdi mdi-account-wrench"></i></button>' +
+					'<button  class="btn btn-sm btn-default" title="删除" id="remove-btn" onclick="removeRole()" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>';
+				return html;
+			}
+			$('#table').bootstrapTable('destroy');
+			$('#table').bootstrapTable({
+				classes: 'table table-hover',
+				url: baseUrl + "/admin/sys/role/query/page",
+				ajaxOptions: {
+					headers: { "Authorization": token }
+				},
+				// 唯一ID字段
+				uniqueId: 'id',
+				// 每行的唯一标识字段
+				idField: 'id',
+				// 是否显示详细视图和列表视图的切换按钮(clickToSelect同时设置为true时点击会报错)
+				showToggle: true,
+				// 请求方法
+				method: 'get',
+				// 工具按钮容器
+				toolbar: '#toolbar',
+				// 是否分页
+				pagination: true,
+				// 分页方式：[client] 客户端分页，[server] 服务端分页
+				sidePagination: "server",
+				// 初始化加载第一页，默认第一页
+				pageNumber: 1,
+				// 每页的记录行数
+				pageSize: 10,
+				// 可供选择的每页的行数 - (亲测大于1000存在渲染问题)
+				pageList: [5, 10, 25, 50, 100],
+				// 在上百页的情况下体验较好 - 能够显示首尾页
+				paginationLoop: true,
+				// 展示首尾页的最小页数
+				paginationPagesBySide: 2,
+				// 展示首尾页的最小页数
+				queryParams: function (params) {
+					var temp = {
+						size: params.limit,
+						// sql语句起始索引
+						// current: params.offset,
+						current: (params.offset / params.limit) + 1,
+						// 排序的列名
+						sort: params.sort,
+						roleName: roleName,
+						// 排序方式 'asc' 'desc'
+						sortOrder: params.order
+					};
+					return temp;
+				},
+				// 是否显示所有的列
+				showColumns: true,
+				// 是否显示刷新按钮
+				showRefresh: true,
+				// 显示图标
+				showButtonIcons: true,
+				// 显示文本
+				showButtonText: false,
+				// // 显示全屏
+				// showFullscreen: true,
+				// 开关控制分页
+				showPaginationSwitch: true,
+				// 总数字段
+				totalField: 'total',
+				// 当字段为 undefined 显示
+				undefinedText: '-',
+				// 排序方式
+				sortOrder: "asc",
+				// 图标前缀
+				iconsPrefix: 'mdi',
+				// 图标大小
+				iconSize: 'mini',
+				// 图标的设置
+				icons: {
+					paginationSwitchDown: 'mdi-door-closed',
+					paginationSwitchUp: 'mdi-door-open',
+					refresh: 'mdi-refresh',
+					toggleOff: 'mdi-toggle-switch-off',
+					toggleOn: 'mdi-toggle-switch',
+					columns: 'mdi-table-column-remove',
+					detailOpen: 'mdi-plus',
+					detailClose: 'mdi-minus',
+					fullscreen: 'mdi-monitor-screenshot',
+					search: 'mdi-table-search',
+					clearSearch: 'mdi-trash-can-outline'
+				},
+				// 按钮的类
+				buttonsClass: 'default',
+				// 类名前缀
+				buttonsPrefix: 'btn',
+				// 自定义的查询参数
+				responseHandler: function (res) {
+					return {
+						"total": res.data.total,//总页数
+						"rows": res.data.records //数据
+					};
+				},
+				onLoadSuccess: function (data) {
+				},
+				formatLoadingMessage: function formatLoadingMessage() {
+					return '<p style="font-size: 15px; color: black;">正在努力地加载数据中，请稍候</p>';
+				},
+				columns,
+				onLoadSuccess: function (data) {
+					$("[data-bs-toggle='tooltip']").tooltip();
+				}
+			});
+		}
+		/**
+			* 关闭按钮
+		*/
+		$(document).on('click', '.close-btn', function () {
+			newsModal.hide();
+		});
+	</script>
+	<script type="text/javascript">
+		function removeRole() {
+			$.confirm({
+				title: '角色删除',
+				content: '确认要删除该条角色吗?',
+				icon: 'mdi mdi-comment-question',
+				animation: 'scale',
+				closeAnimation: 'scale',
+				opacity: 0.5,
+				buttons: {
+					'confirm': {
+						text: '继续',
+						btnClass: 'btn-blue',
+						action: function () {
+							$.confirm({
+								title: '该数据也许很关键',
+								content: '该数据删除后不可恢复，再次确认是否删除?',
+								icon: 'mdi mdi-alert',
+								animation: 'scale',
+								closeAnimation: 'zoom',
+								buttons: {
+									confirm: {
+										text: '是的',
+										btnClass: 'btn-orange',
+										action: function () {
+											$.ajax({
+												url: baseUrl + "/admin/sys/role/remove?roleId=" + $("#delId").val(),
+												type: "GET",
+												headers: { 'Authorization': token },
+												success: function (data) {
+													$('#table').bootstrapTable('refresh');
+													// loaderTable();
+												},
+												error: function (data) {
+													responseError(data);
+												}
+											});
+										}
+									},
+									'取消': function () {
+									}
+								}
+							});
+						}
+					},
+					'取消': function () {
+					},
+				}
+			});
+		}
+	</script>
+
+	<!-- 权限树弹框逻辑 -->
+	<script type="text/javascript">
+
+		$('#menu-tree').on("ready.jstree", function (e, data) {
+			// 默认关闭/收起宣布
+			$('#menu-tree').jstree().close_all();
+		});
+
+		function buildData(data, menuIds, bool) {
+			console.log("当前角色权限：" + menuIds);
+			var str = [];
+			$.each(data, function (index, domEle) {
+				if (bool = true) {
+					var subChildren = obtainSubChildren(domEle, menuIds);
+					var arr = {
+						"id": domEle.menuId,
+						"text": domEle.menuName,
+						"children": subChildren,
+						"icon": "mdi mdi-folder-outline",
+					}
+					if (menuIds != null) {
+						if ($.inArray(domEle.menuId, menuIds) != -1) {
+							arr.state = { "selected": true, "opened": true };
+						}
+					}
+				} else {
+					var arr = domEle.menuId;
+				}
+				str.push(arr);
+			})
+			return str;
+		}
+
+		function obtainSubChildren(domEle, menuIds) {
+			var str = [];
+			if (domEle.children != '') {
+				$.each(domEle.children, function (index, subDomEle) {
+					var arr = {
+						"id": subDomEle.menuId,
+						"text": subDomEle.menuName,
+						"children": obtainSubChildren(subDomEle),
+						"icon": "mdi mdi-folder-outline",
+					}
+
+					if (menuIds != null) {
+						if ($.inArray(subDomEle.menuId, menuIds) != -1) {
+							arr.state = { "selected": true, "opened": true };
+						}
+					}
+					str.push(arr);
+				})
+			}
+			return str
+		}
+
+	</script>
+</body>
+
+</html>
