@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta name="author" content="yinq">
-  <title>首页 - 橙墨科技综合管理平台</title>
+  <title>首页 - 数豚科技综合管理平台</title>
   <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-touch-fullscreen" content="yes">
@@ -27,8 +27,12 @@
 
         <!-- logo -->
         <div id="logo" class="sidebar-header">
-          <a href="../index/index.html"><img src="../../images/login-sidebar.png" title="LightYear"
-              alt="LightYear" /></a>
+          <a href="../index/index.html"><img src="../../images/favicon.ico" height="35px" />&nbsp;
+            <h5 style="color: #241818c0; font-weight: bold;padding-top: 3%;">数豚数据管控平台</h5>
+          </a>
+
+          <!-- <a href="../index/index.html"><img src="../../images/login-sidebar.png" title="LightYear"
+              alt="LightYear" /></a> -->
         </div>
         <div class="lyear-layout-sidebar-info lyear-scroll">
 
@@ -70,7 +74,7 @@
           <div class="sidebar-footer">
             <p class="copyright">
               <span>Copyright &copy; 2023. </span>
-              <a target="_blank" href="#">山西橙墨科技有限公司</a>
+              <a target="_blank" href="#">数豚科技</a>
               <span> All rights reserved.</span>
             </p>
           </div>
@@ -306,8 +310,8 @@
             <li class="dropdown">
               <a href="javascript:void(0)" data-bs-toggle="dropdown" class="dropdown-toggle">
                 <img class="avatar-md rounded-circle" name="avatar" id="avatar" src="../../images/users/user.png"
-                  alt="橙墨" />
-                <span style="margin-left: 10px;" id="username">橙墨</span>
+                  alt="数豚" />
+                <span style="margin-left: 10px;" id="username">数豚</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>
@@ -421,6 +425,7 @@
         success: function (data) {
           $("#username").text(data.data.userName)
           $("#avatar").attr("src", data.data.avatar)
+          console.log(data.data.avatar)
         },
         error: function (data) {
           responseError(data);

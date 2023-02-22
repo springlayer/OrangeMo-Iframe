@@ -197,7 +197,6 @@
 
 		// 操作方法 - 授权
 		function aclRole(menuIds) {
-			console.log(menuIds)
 			$('#menuModal').find('.modal-title span').text('角色授权');
 			menuModal = new bootstrap.Modal($('#menuModal').get(0), {
 				keyboard: false,
@@ -243,11 +242,15 @@
 			$.each(selectNode, function (index, domEle) {
 				arrey.push(domEle.id);
 			})
+
+			var selectNode2 = $('#menu-tree').jstree(true).get_undetermined(true);
+			$.each(selectNode2, function (index, domEle) {
+				arrey.push(domEle.id);
+			})
 			var params = {
 				roleId: $("#roleId").val(),
 				menuIds: arrey
 			}
-			console.log(params)
 			$.ajax({
 				url: baseUrl + "/admin/sys/role/acl",
 				type: "POST",
@@ -415,7 +418,7 @@
 				field: 'operate',
 				title: '操作',
 				align: 'center',
-				formatter: btnGroup,  // 自定义方法
+				formatter: (val, row) => btnGroup(val, row),  // 自定义方法
 				events: {
 					'click .edit-btn': function (event, value, row, index) {
 						event.stopPropagation();
@@ -431,17 +434,18 @@
 						aclRole(row.menuIds);
 					},
 					'click #js-create-tab': function (event, value, row, index) {
+						roleId = 1
 						// document.getElementsByClassName('tab-pane ').contentWindow.postMessage("Hello", "*");
 					}
 				}
 			}];
 
 			// 自定义操作按钮
-			function btnGroup() {
+			function btnGroup(val, row) {
 				let html =
 					'<button  class="btn btn-sm btn-default me-1 edit-btn" title="编辑" data-bs-toggle="tooltip"><i class="mdi mdi-pencil"></i></button>' +
 					'<button  class="btn btn-sm btn-default me-1 acl-btn" title="角色授权" data-bs-toggle="tooltip"><i class="mdi mdi-axe-battle"></i></button>' +
-					'<button  class="btn btn-sm btn-default me-1 acl-user-btn" id="js-create-tab" data-title="角色人员" data-url="/system/acl/aclUser.html" title="角色人员" data-bs-toggle="tooltip"><i class="mdi mdi-account-wrench"></i></button>' +
+					'<button  class="btn btn-sm btn-default me-1 acl-user-btn" id="js-create-tab" data-title="角色人员" data-url="/system/acl/aclUser.html?id=' + row.roleId + '" title="角色人员" data-bs-toggle="tooltip"><i class="mdi mdi-account-wrench"></i></button>' +
 					'<button  class="btn btn-sm btn-default" title="删除" id="remove-btn" onclick="removeRole()" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>';
 				return html;
 			}
@@ -621,7 +625,9 @@
 			var str = [];
 			$.each(data, function (index, domEle) {
 				if (bool = true) {
-					var subChildren = obtainSubChildren(domEle, menuIds);
+					var flag = false;
+
+					var subChildren = obtainSubChildren(domEle, menuIds, flag);
 					var arr = {
 						"id": domEle.menuId,
 						"text": domEle.menuName,
@@ -630,7 +636,9 @@
 					}
 					if (menuIds != null) {
 						if ($.inArray(domEle.menuId, menuIds) != -1) {
-							arr.state = { "selected": true, "opened": true };
+							if (subChildren == '' || flag) {
+								arr.state = { "selected": true, "opened": true };
+							}
 						}
 					}
 				} else {
@@ -641,24 +649,32 @@
 			return str;
 		}
 
-		function obtainSubChildren(domEle, menuIds) {
+		function obtainSubChildren(domEle, menuIds, flag) {
 			var str = [];
+			var num = 0;
 			if (domEle.children != '') {
 				$.each(domEle.children, function (index, subDomEle) {
 					var arr = {
 						"id": subDomEle.menuId,
 						"text": subDomEle.menuName,
-						"children": obtainSubChildren(subDomEle),
+						"children": obtainSubChildren(subDomEle, menuIds, flag),
 						"icon": "mdi mdi-folder-outline",
 					}
 
 					if (menuIds != null) {
 						if ($.inArray(subDomEle.menuId, menuIds) != -1) {
-							arr.state = { "selected": true, "opened": true };
+							if (subDomEle.children == '') {
+								arr.state = { "selected": true, "opened": true };
+								num++;
+							}
+							console.log(subDomEle.menuName + "---" + num)
 						}
 					}
 					str.push(arr);
 				})
+				if (str.length == num) {
+					flag = true;
+				}
 			}
 			return str
 		}

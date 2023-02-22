@@ -26,10 +26,9 @@
 					<div class="card-body">
 						<div id="toolbar" class="toolbar-btn-action">
 							<button id="add-btn" type="button" class="btn btn-primary me-1">
-								<span class="mdi mdi-plus" aria-hidden="true"></span> 添加用户
+								<span class="mdi mdi-account-plus" aria-hidden="true"></span> 添加用户
 							</button>
 						</div>
-						<input id="hz" value="">
 						<table id="table"></table>
 					</div>
 				</div>
@@ -131,7 +130,18 @@
 	<script type="text/javascript" src="../../js/perfect-scrollbar.min.js"></script>
 	<!-- 表单列表逻辑 -->
 	<script>
-
+		//获取roleId
+		function GetQueryString(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+			var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+			var context = "";
+			if (r != null)
+				context = decodeURIComponent(r[2]);
+			reg = null;
+			r = null;
+			return context == null || context == "" || context == "undefined" ? "" : context;
+		}
+		$("#roleId").val(GetQueryString('id'))
 		var newsModal; // 模态框
 		/**
 		 * 绑定模态框隐藏事件
@@ -232,48 +242,31 @@
 				// 宽度单位
 				widthUnit: 'rem'
 			}, {
-				field: 'roleName',
+				field: 'userName',
 				align: 'center',
-				title: '角色名称',
-				titleTooltip: '角色名称'
+				title: '姓名',
+				titleTooltip: '姓名'
 			}, {
-				field: 'roleKey',
+				field: 'loginName',
 				align: 'center',
-				title: '角色标识',
+				title: '用户名',
 			}, {
-				field: 'roleSort',
+				field: 'phone',
 				align: 'center',
-				title: '角色排序'
+				title: '手机号'
 			}, {
-				field: 'status',
-				title: '状态',
-				formatter: function (value, row, index) {
-					var value = "";
-					if (row.status == '1') {
-						value = 'checked';
-					} else if (row.status == '0') {
-						value = '';
-					}
-					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
-				}
+				field: 'email',
+				align: 'center',
+				title: '邮箱'
 			}, {
 				field: 'operate',
 				title: '操作',
 				align: 'center',
 				formatter: btnGroup,  // 自定义方法
 				events: {
-					'click .edit-btn': function (event, value, row, index) {
+					'click .remove': function (event, value, row, index) {
 						event.stopPropagation();
-						editRole(row.roleKey, row.roleName, row.roleSort, row.roleId, row.remark);
-					},
-					'click #remove-btn': function (event, value, row, index) {
-						event.stopPropagation();
-						$("#delId").val(row.roleId)
-					},
-					'click .acl-btn': function (event, value, row, index) {
-						event.stopPropagation();
-						$("#roleId").val(row.roleId)
-						aclRole(row.menuIds);
+						removeuserRole(row.userId, $("#roleId").val());
 					}
 				}
 			}];
@@ -281,16 +274,13 @@
 			// 自定义操作按钮
 			function btnGroup() {
 				let html =
-					'<button  class="btn btn-sm btn-default me-1 edit-btn" title="编辑" data-bs-toggle="tooltip"><i class="mdi mdi-pencil"></i></button>' +
-					'<button  class="btn btn-sm btn-default me-1 acl-btn" title="角色授权" data-bs-toggle="tooltip"><i class="mdi mdi-axe-battle"></i></button>' +
-					'<button  class="btn btn-sm btn-default me-1" id="js-create-tab" data-title="授权人员" title="角色人员" data-bs-toggle="tooltip"><i class="mdi mdi-account-wrench"></i></button>' +
-					'<button  class="btn btn-sm btn-default" title="删除" id="remove-btn" onclick="removeRole()" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>';
+					'<button  class="btn btn-sm btn-default remove" title="取消授权" id="remove-btn" data-bs-toggle="tooltip"><i class="mdi mdi-account-remove"></i></button>';
 				return html;
 			}
 			$('#table').bootstrapTable('destroy');
 			$('#table').bootstrapTable({
 				classes: 'table table-hover',
-				url: baseUrl + "/admin/sys/role/query/page",
+				url: baseUrl + "/admin/sys/role/query/page/in/user",
 				ajaxOptions: {
 					headers: { "Authorization": token }
 				},
@@ -327,7 +317,7 @@
 						current: (params.offset / params.limit) + 1,
 						// 排序的列名
 						sort: params.sort,
-						roleName: roleName,
+						roleId: $("#roleId").val(),
 						// 排序方式 'asc' 'desc'
 						sortOrder: params.order
 					};
@@ -391,18 +381,11 @@
 				}
 			});
 		}
-		/**
-			* 关闭按钮
-		*/
-		$(document).on('click', '.close-btn', function () {
-			newsModal.hide();
-		});
-	</script>
-	<script type="text/javascript">
-		function removeRole() {
+
+		function removeuserRole(userId, roleId) {
 			$.confirm({
-				title: '角色删除',
-				content: '确认要删除该条角色吗?',
+				title: '用户权限取消',
+				content: '确认要取消用户权限?',
 				icon: 'mdi mdi-comment-question',
 				animation: 'scale',
 				closeAnimation: 'scale',
@@ -424,12 +407,11 @@
 										btnClass: 'btn-orange',
 										action: function () {
 											$.ajax({
-												url: baseUrl + "/admin/sys/role/remove?roleId=" + $("#delId").val(),
+												url: baseUrl + "/admin/sys/role/remove/user?userId=" + userId + "&roleId=" + roleId,
 												type: "GET",
 												headers: { 'Authorization': token },
 												success: function (data) {
 													$('#table').bootstrapTable('refresh');
-													// loaderTable();
 												},
 												error: function (data) {
 													responseError(data);
@@ -448,62 +430,13 @@
 				}
 			});
 		}
-	</script>
 
-	<!-- 权限树弹框逻辑 -->
-	<script type="text/javascript">
-
-		$('#menu-tree').on("ready.jstree", function (e, data) {
-			// 默认关闭/收起宣布
-			$('#menu-tree').jstree().close_all();
+		/**
+			* 关闭按钮
+		*/
+		$(document).on('click', '.close-btn', function () {
+			newsModal.hide();
 		});
-
-		function buildData(data, menuIds, bool) {
-			console.log("当前角色权限：" + menuIds);
-			var str = [];
-			$.each(data, function (index, domEle) {
-				if (bool = true) {
-					var subChildren = obtainSubChildren(domEle, menuIds);
-					var arr = {
-						"id": domEle.menuId,
-						"text": domEle.menuName,
-						"children": subChildren,
-						"icon": "mdi mdi-folder-outline",
-					}
-					if (menuIds != null) {
-						if ($.inArray(domEle.menuId, menuIds) != -1) {
-							arr.state = { "selected": true, "opened": true };
-						}
-					}
-				} else {
-					var arr = domEle.menuId;
-				}
-				str.push(arr);
-			})
-			return str;
-		}
-
-		function obtainSubChildren(domEle, menuIds) {
-			var str = [];
-			if (domEle.children != '') {
-				$.each(domEle.children, function (index, subDomEle) {
-					var arr = {
-						"id": subDomEle.menuId,
-						"text": subDomEle.menuName,
-						"children": obtainSubChildren(subDomEle),
-						"icon": "mdi mdi-folder-outline",
-					}
-
-					if (menuIds != null) {
-						if ($.inArray(subDomEle.menuId, menuIds) != -1) {
-							arr.state = { "selected": true, "opened": true };
-						}
-					}
-					str.push(arr);
-				})
-			}
-			return str
-		}
 
 	</script>
 </body>

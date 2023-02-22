@@ -208,6 +208,11 @@ if (typeof jQuery === "undefined") {
                 this.active($navTab);
                 return this;
             }
+            var urlArr=param.url?.split('?');
+            if (urlArr?.length == 2) {
+                var $navTab1 = this.$element.navPanelList.find('a[data-url^="' + urlArr[0] + '"]:first');
+                this.close($navTab1);
+            }
             param.active = !param.active ? active : param.active;
             //nav tab create
             $navTab = this._createNavTab(param);
