@@ -25,7 +25,7 @@
 				<div class="col-md-12">
 					<div class="card-body">
 						<div id="toolbar" class="toolbar-btn-action">
-							<button id="add-btn" type="button" class="btn btn-primary me-1">
+							<button id="add-btn" type="button" class="btn btn-primary me-1" onclick="addUserAcl()">
 								<span class="mdi mdi-account-plus" aria-hidden="true"></span> 添加用户
 							</button>
 						</div>
@@ -41,76 +41,39 @@
 			<div class="modal-content">
 				<form action="/news/save" method="post" class="save-form" novalidate>
 					<div class="modal-header">
-						<h6 class="modal-title"><span>角色新增</span></h6>
+						<h6 class="modal-title"><span>用户授权</span></h6>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<div class="row">
-							<div class="col-md-12">
-								<div class="mb-3 col-md-12">
-									<label for="title" class="form-label">角色名称</label>
-									<input type="text" class="form-control" id="roleName" name="roleName" value=""
-										placeholder="请输入角色名称" required />
-									<div class="invalid-feedback">请填写角色名称</div>
-								</div>
-
-								<div class="mb-3 col-md-12">
-									<label for="seo_keywords" class="form-label">角色标识</label>
-									<input type="text" class="form-control" id="roleKey" name="roleKey" value=""
-										placeholder="请输入角色标识" required />
-									<div class="invalid-feedback">请填写角色标识</div>
-								</div>
-
-								<div class="mb-3 col-md-12">
-									<label for="seo_keywords" class="form-label">角色排序</label>
-									<input type="text" class="form-control" id="roleSort" name="roleSort" value=""
-										placeholder="请输入角色排序" required />
-									<div class="invalid-feedback">请填写角色排序</div>
+							<div class="col-md-4">
+								<div class="row">
+									<label class="col-sm-4 col-form-label">
+										用户名称</label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control pull-left" id="sou-username"
+											name="sou-username" placeholder="请输入用户名称" />
+									</div>
 								</div>
 							</div>
-
-							<div class="mb-3 col-md-12">
-								<label for="content" class="form-label">备注</label>
-								<textarea class="form-control" id="remark" name="remark" rows="3" value=""
-									placeholder="备注"></textarea>
+							<div class="col-md-4">
+								<span class="btn btn-primary me-1" onclick="sousuo()">搜索</span>
+								<button type="reset" class="btn btn-default">重置</button>
 							</div>
+
 						</div>
+						<table id="unUsertable"></table>
 					</div>
 				</form>
 				<div class="modal-footer">
 					<input type="hidden" name="id" id="news_id" value="" />
 					<button type="button" class="btn btn-secondary close-btn">关闭</button>
-					<button type="submit" class="btn btn-primary save-btn">保存</button>
+					<button type="submit" class="btn btn-primary save-btn" onclick="saveUserAcl()">保存</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<input type="hidden" id="delId" value="">
 	<input type="hidden" id="roleId" value="">
-	<div class="modal fade" id="menuModal">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h6 class="modal-title" id="image-modal-label">角色授权</h6>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-						id="menuzTree"></button>
-				</div>
-				<div class="card-body">
-					<div id="menu-tree"></div>
-				</div>
-				<div class="modal-body">
-					<div class="image-body">
-						<div class="modal-footer">
-							<input type="hidden" name="id" id="news_id" value="" />
-							<button type="button" class="btn btn-secondary close-btn-menu"
-								aria-label="Close">关闭</button>
-							<button type="submit" class="btn btn-primary save-btn-menu">确定</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 	</div>
 	</div>
 
@@ -155,28 +118,254 @@
 		/**
 		 * 新增按钮
 		 */
-		$(document).on('click', '#add-btn', function () {
-			$('#newsModal').find('.modal-title span').text('角色新增');
+		function addUserAcl() {
+			$('#newsModal').find('.modal-title span').text('用户授权');
 			newsModal = new bootstrap.Modal($('#newsModal').get(0), {
 				keyboard: false,
 				backdrop: 'static',
 			});
-			$('#roleKey').removeAttr("disabled");
-			$('#roleId').val("");
+			unUserLoaderTable(null, $('#roleId').val());
 			newsModal.show();
-		});
+		}
 
+		function sousuo() {
+			unUserLoaderTable($("#sou-username").val(), $('#roleId').val());
+		}
+
+
+
+		function unUserLoaderTable(username, roleId) {
+			/**
+			 * 分页相关的配置
+			 **/
+			const pagination = {
+				// 分页方式：[client] 客户端分页，[server] 服务端分页
+				sidePagination: "server",
+				// 初始化加载第一页，默认第一页
+				pageNumber: 1,
+				// 每页的记录行数
+				pageSize: 10,
+				// 可供选择的每页的行数 - (亲测大于1000存在渲染问题)
+				pageList: [5, 10, 25, 50, 100],
+				// 在上百页的情况下体验较好 - 能够显示首尾页
+				paginationLoop: true,
+				// 展示首尾页的最小页数
+				paginationPagesBySide: 2
+			};
+
+			/**
+			 * 按钮相关配置
+			 **/
+			const button = {
+				// 按钮的类
+				buttonsClass: 'default',
+				// 类名前缀
+				buttonsPrefix: 'btn'
+			}
+
+			/**
+			 * 图标相关配置
+			 **/
+			const icon = {
+				// 图标前缀
+				iconsPrefix: 'mdi',
+				// 图标大小
+				iconSize: 'mini',
+				// 图标的设置
+				icons: {
+					paginationSwitchDown: 'mdi-door-closed',
+					paginationSwitchUp: 'mdi-door-open',
+					refresh: 'mdi-refresh',
+					toggleOff: 'mdi-toggle-switch-off',
+					toggleOn: 'mdi-toggle-switch',
+					columns: 'mdi-table-column-remove',
+					detailOpen: 'mdi-plus',
+					detailClose: 'mdi-minus',
+					fullscreen: 'mdi-monitor-screenshot',
+					search: 'mdi-table-search',
+					clearSearch: 'mdi-trash-can-outline'
+				}
+			};
+
+			/**
+			 * 用于演示的列信息
+			 **/
+			const columns = [{
+				field: 'id',
+				checkbox: true,
+				// 列的宽度
+				width: 5,
+				// 宽度单位
+				widthUnit: 'rem'
+			},
+			{
+				field: 'userId',
+				align: 'center',
+				visible: false,
+				title: '用户ID',
+				titleTooltip: '用户ID'
+			}, {
+				field: 'userName',
+				align: 'center',
+				title: '姓名',
+				titleTooltip: '姓名'
+			}, {
+				field: 'loginName',
+				align: 'center',
+				title: '用户名',
+			}, {
+				field: 'phone',
+				align: 'center',
+				title: '手机号'
+			}, {
+				field: 'email',
+				align: 'center',
+				title: '邮箱'
+			}];
+
+			$('#unUsertable').bootstrapTable('destroy');
+			$('#unUsertable').bootstrapTable({
+				classes: 'table table-hover',
+				url: baseUrl + "/admin/sys/role/query/page/un/user",
+				ajaxOptions: {
+					headers: { "Authorization": token }
+				},
+				// 唯一ID字段
+				uniqueId: 'id',
+				// 每行的唯一标识字段
+				idField: 'id',
+				// // 是否显示详细视图和列表视图的切换按钮(clickToSelect同时设置为true时点击会报错)
+				// showToggle: true,
+				// 请求方法
+				method: 'get',
+				// // 工具按钮容器
+				// toolbar: '#toolbar',
+				// 是否分页
+				pagination: true,
+				// 分页方式：[client] 客户端分页，[server] 服务端分页
+				sidePagination: "server",
+				// 初始化加载第一页，默认第一页
+				pageNumber: 1,
+				// 每页的记录行数
+				pageSize: 10,
+				// 可供选择的每页的行数 - (亲测大于1000存在渲染问题)
+				pageList: [5, 10, 25, 50, 100],
+				// 在上百页的情况下体验较好 - 能够显示首尾页
+				paginationLoop: true,
+				// 展示首尾页的最小页数
+				paginationPagesBySide: 2,
+				// 展示首尾页的最小页数
+				queryParams: function (params) {
+					var temp = {
+						size: params.limit,
+						// sql语句起始索引
+						// current: params.offset,
+						current: (params.offset / params.limit) + 1,
+						// 排序的列名
+						sort: params.sort,
+						username: username,
+						roleId: roleId,
+						// 排序方式 'asc' 'desc'
+						sortOrder: params.order
+					};
+					return temp;
+				},
+				// 显示图标
+				showButtonIcons: true,
+				// 显示文本
+				showButtonText: false,
+				// 总数字段
+				totalField: 'total',
+				// 当字段为 undefined 显示
+				undefinedText: '-',
+				// 排序方式
+				sortOrder: "asc",
+				// 图标前缀
+				iconsPrefix: 'mdi',
+				// 图标大小
+				iconSize: 'mini',
+				// 图标的设置
+				icons: {
+					paginationSwitchDown: 'mdi-door-closed',
+					paginationSwitchUp: 'mdi-door-open',
+					refresh: 'mdi-refresh',
+					toggleOff: 'mdi-toggle-switch-off',
+					toggleOn: 'mdi-toggle-switch',
+					columns: 'mdi-table-column-remove',
+					detailOpen: 'mdi-plus',
+					detailClose: 'mdi-minus',
+					fullscreen: 'mdi-monitor-screenshot',
+					search: 'mdi-table-search',
+					clearSearch: 'mdi-trash-can-outline'
+				},
+				// 按钮的类
+				buttonsClass: 'default',
+				// 类名前缀
+				buttonsPrefix: 'btn',
+				// 自定义的查询参数
+				responseHandler: function (res) {
+					return {
+						"total": res.data.total,//总页数
+						"rows": res.data.records //数据
+					};
+				},
+				onLoadSuccess: function (data) {
+				},
+				formatLoadingMessage: function formatLoadingMessage() {
+					return '<p style="font-size: 15px; color: black;">正在努力地加载数据中，请稍候</p>';
+				},
+				columns,
+				onLoadSuccess: function (data) {
+					$("[data-bs-toggle='tooltip']").tooltip();
+				}
+			});
+		}
+
+		function saveUserAcl() {
+			var rows = $('#unUsertable').bootstrapTable('getSelections');
+			if (rows == '') {
+				showNotify("请最少选择一项", 'danger', 3000);
+			} else {
+				var arrey = []
+				$.each(rows, function (index, domEle) {
+					arrey.push(domEle.userId);
+				})
+
+				var params = {
+					roleId: $("#roleId").val(),
+					userId: arrey
+				}
+				$.ajax({
+					url: baseUrl + "/admin/sys/role/create/acl/user",
+					type: "POST",
+					data: JSON.stringify(params),
+					headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+					success: function (data) {
+						if (data.code = '200') {
+							showNotify("授权成功", 'success', 3000);
+							$('#table').bootstrapTable('refresh');
+							newsModal.hide();
+						}
+					},
+					error: function (data) {
+						loader.destroy();
+						responseError(data);
+					}
+				});
+			}
+		}
 		/**
-	  * 关闭按钮
-	*/
+		   * 关闭按钮
+		*/
 		$(document).on('click', '.close-btn-menu', function () {
-			menuModal.hide();
+			newsModal.hide();
 		});
 
 
 		$(function () {
 			loaderTable();
 		});
+
 
 		function loaderTable(roleName) {
 			/**
@@ -381,6 +570,7 @@
 				}
 			});
 		}
+
 
 		function removeuserRole(userId, roleId) {
 			$.confirm({

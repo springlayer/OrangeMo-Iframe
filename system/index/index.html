@@ -424,8 +424,11 @@
         headers: { 'Authorization': token },
         success: function (data) {
           $("#username").text(data.data.userName)
-          $("#avatar").attr("src", data.data.avatar)
-          console.log(data.data.avatar)
+          if (data.data.avatar == '') {
+            $("#avatar").attr("src", "../../images/favicon.ico")
+          } else {
+            $("#avatar").attr("src", data.data.avatar)
+          }
         },
         error: function (data) {
           responseError(data);
