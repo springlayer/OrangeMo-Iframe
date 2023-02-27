@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="../../css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../css/style.min.css">
+    <link rel="stylesheet" href="../../js/bootstrap-table/bootstrap-table.min.css">
+    <link rel="stylesheet" type="text/css" href="../../jstree/style.min.css">
+    <link rel="stylesheet" href="../../js/bootstrap-treegrid/jquery.treegrid.min.css">
+    <link rel="stylesheet" type="text/css" href="../../js/jquery-confirm/jquery-confirm.min.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <header class="card-header">
+                        <div class="card-title">菜单管理</div>
+                    </header>
+                    <div class="card-body">
+                        <div id="toolbar" class="toolbar-btn-action">
+                            <button id="add-btn" type="button" class="btn btn-primary me-1">
+                                <span class="mdi mdi-plus" aria-hidden="true"></span> 新增
+                            </button>
+                            <button id="status" value="false" type="button" class="btn btn-success" onclick="zhedie()">
+                                <span class="mdi mdi-align-horizontal-distribute" aria-hidden="true"></span>折叠
+                            </button>
+                        </div>
+                        <table id="table"></table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--Start 模态框-->
+    <div class="modal fade" id="newsModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <form action="/news/save" method="post" class="save-form" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span>菜单新增</span></h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label for="type" class="form-label">所属菜单</label>
+                                        <input type="text" class="form-control" id="pMenuName" name="pName" value=""
+                                            onclick="menuZtree()" placeholder="主目录"
+                                            style="cursor: pointer;background-color: #cfcdcd;" />
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="title" class="form-label">菜单名称</label>
+                                        <input type="text" class="form-control" id="menuName" name="menuName"
+                                            placeholder="请输入菜单名称" required />
+                                        <div class="invalid-feedback">请填写菜单名称</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label for="title" class="form-label">菜单图标</label>
+                                        <input type="text" class="form-control" id="icon" name="icon"
+                                            placeholder="请选择菜单图标" />
+                                    </div>
+
+                                    <div class="mb-3 col-md-6">
+                                        <label for="menuType" class="form-label">类型</label>
+                                        <div class="clearfix">
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" id="m" name="menuType" class="form-check-input"
+                                                    value="M" checked>
+                                                <label class="form-check-label" for="menuTypeOne">目录</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" id="c" name="menuType" class="form-check-input"
+                                                    value="C">
+                                                <label class="form-check-label" for="menuTypeTwo">菜单</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" id="f" name="menuType" class="form-check-input"
+                                                    value="F">
+                                                <label class="form-check-label" for="menuTypeThree">按钮</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label for="seo_keywords" class="form-label">请求地址</label>
+                                        <input type="text" class="form-control" id="url" name="url" value=""
+                                            placeholder="请输入请求地址" required />
+                                        <div class="invalid-feedback">请填写请求地址</div>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="content" class="form-label">打开方式</label>
+                                        <select class="form-select" id="target" aria-label="默认下拉选择示例">
+                                            <option value="" selected>标签</option>
+                                            <option value="menuBlank">新窗口</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="seo_keywords" class="form-label">菜单排序</label>
+                                        <input type="text" class="form-control" id="orderNum" name="orderNum" value=""
+                                            placeholder="请输入菜单排序" required />
+                                        <div class="invalid-feedback">请填写菜单排序</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <input type="hidden" name="id" id="news_id" value="" />
+                    <button type="button" class="btn btn-secondary close-btn">关闭</button>
+                    <button type="submit" class="btn btn-primary save-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="menuModal">选择菜单</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="menu-tree">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="id" id="news_id" value="" />
+                    <button type="button" class="btn btn-secondary close-btn-menu" aria-label="Close">关闭</button>
+                    <button type="submit" class="btn btn-primary save-btn-menu">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="pMenuId" value="0">
+    <input type="hidden" id="menuId">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/popper.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/main.min.js"></script>
+    <script src="../../js/globalConfig.js" type="text/javascript"></script>
+    <script src="../../jstree/jstree.min.js"></script>
+    <script type="text/javascript" src="../../js/lyear-loading.js"></script>
+    <script src="../../js/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="../../js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../../js/bootstrap-treegrid/jquery.treegrid.min.js"></script>
+    <script src="../../js/bootstrap-treegrid/bootstrap-table-treegrid.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-notify.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery-confirm/jquery-confirm.min.js"></script>
+</body>
+<script type="text/javascript">
+
+    var newsModal; // 模态框
+
+    /**
+     * 绑定模态框隐藏事件
+     */
+    $('#newsModal').get(0).addEventListener('hidden.bs.modal', function (event) {
+        $('.save-form').removeClass('was-validated');
+        $('.save-form').get(0).reset();
+        $('#news_id').val("");
+    })
+
+    /**
+     * 新增按钮
+     */
+    $(document).on('click', '#add-btn', function () {
+        $('#newsModal').find('.modal-title span').text('菜单新增');
+        $("#pMenuId").val(0);
+        newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        newsModal.show();
+    });
+
+    /**
+    * 关闭按钮
+    */
+    $(document).on('click', '.close-btn', function () {
+        newsModal.hide();
+    });
+
+    function add(menuId, menuName) {
+        $('#newsModal').find('.modal-title span').text('菜单新增');
+        newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        $("#pMenuName").val(menuName);
+        $("#pMenuId").val(menuId);
+        newsModal.show();
+    }
+
+
+    $(document).on('click', '.save-btn', function (event) {
+        var form = $('.save-form');
+        var self = $(this);
+
+        // 这里只做不为空的验证
+        form.get(0).classList.add('was-validated');
+        if (!form.get(0).checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+        // self.attr('autocomplete', 'off').prop('disabled', true);
+        var loader = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg'
+        });
+
+        var params = {
+            menuId: $("#menuId").val(),
+            menuName: $("#menuName").val(),
+            parentId: $("#pMenuId").val(),
+            orderNum: $("#orderNum").val(),
+            url: $("#url").val(),
+            target: $("#target").val(),
+            menuType: $("input[name=menuType]:checked").val(),
+            icon: $("#icon").val()
+        }
+
+        $.ajax({
+            url: baseUrl + "/admin/sys/menu/createOrUpdate",
+            type: "POST",
+            data: JSON.stringify(params),
+            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+            success: function (data) {
+                loader.destroy();
+                loadData();
+                newsModal.hide();
+            },
+            error: function (data) {
+                loader.destroy();
+                responseError(data);
+            }
+        });
+    });
+
+    var $table = $('#table');
+    $(function () {
+        loadData();
+    })
+
+    function loadData() {
+        $.ajax({
+            url: baseUrl + "/admin/sys/menu/list",
+            type: "GET",
+            headers: { 'Authorization': token },
+            success: function (data) {
+                loadTable(data.data);
+            },
+            error: function (data) {
+                responseError(data);
+            }
+        });
+    }
+
+    function loadTable(data) {
+        $table.bootstrapTable('destroy');
+        $table.bootstrapTable({
+            data: data,
+            idField: 'menuId',
+            classes: 'table table-hover',
+            dataType: 'jsonp',
+            singleSelect: true,
+            columns: [
+                {
+                    radio: true
+                },
+                // { field: 'menuId', title: '编号' },
+                { field: 'menuName', title: '名称' },
+                {
+                    field: 'menuType', title: '菜单类型', sortable: true, formatter: function (value, row, index) {
+                        var value = "";
+                        if (row.menuType == 'M') {
+                            value = '<span class="badge bg-danger">目录</span>';
+                        } else if (row.menuType == 'C') {
+                            value = '<span class="badge bg-success">菜单</span>';
+                        } else {
+                            value = '<span class="badge bg-warning">按钮</span>';
+                        }
+                        return value;
+                    }
+                },
+                // { field: 'parentId', title: '所属上级' },
+                { field: 'visible', title: '状态', sortable: true, formatter: 'statusFormatter' },
+                { field: 'url', title: '路由' },
+                { field: 'operate', title: '操作', align: 'center', formatter: 'operateFormatter' },
+            ],
+            // bootstrap-table-treegrid.js 插件配置 -- start
+            //在哪一列展开树形
+            treeShowField: 'menuName',
+            //指定父id列
+            parentIdField: 'parentId',
+
+            onResetView: function (data) {
+                $table.treegrid({
+                    initialState: 'collapsed',// 所有节点都折叠
+                    // initialState: 'expanded',// 所有节点都展开，默认展开
+                    treeColumn: 1,
+                    // expanderExpandedClass: 'glyphicon glyphicon-minus', //图标样式
+                    // expanderCollapsedClass: 'glyphicon glyphicon-plus',
+                    // onChange: function () {
+                    //     $table.bootstrapTable('resetWidth');
+                    // }
+                });
+                //只展开树形的第一级节点
+                $table.treegrid('getRootNodes').treegrid('expand');
+            },
+            // onCheck: function (row) {
+
+            //     // var datas = $table.bootstrapTable('getData');
+            //     // 勾选子类
+            //     // selectChilds(datas, row, "id", "pid", true);
+
+            //     // 勾选父类
+            //     // selectParentChecked(datas, row, "id", "pid")
+
+            //     // 刷新数据
+            //     // $table.bootstrapTable('load', datas);
+            // },
+            onClickRow: function (row, $element) {
+                console.log($element[0].firstElementChild.firstElementChild.click);
+                $element[0].firstElementChild.firstElementChild.click();
+            },
+            // bootstrap-table-treetreegrid.js 插件配置 -- end
+        });
+    };
+
+    function zhedie() {
+        var status = $("#status").val();
+        console.log(status)
+        if (status == "false") {
+            $table.treegrid({
+                initialState: 'expanded',// 所有节点都展开，默认展开
+                treeColumn: 1,
+            });
+            $("#status").val("true");
+        } else if (status == "true") {
+            $table.treegrid({
+                initialState: 'collapsed',// 所有节点都折叠
+                treeColumn: 1,
+            });
+            $("#status").val("false");
+        }
+    };
+    // 格式化按钮
+    function operateFormatter(value, row, index) {
+        return [
+            '<button class="RoleOfadd btn btn-sm btn-default me-1 add-btn" onclick="add(' + row.menuId + ',\'' + row.menuName + '\')" title="新增" data-bs-toggle="tooltip" id="add"><i class="mdi mdi-plus-thick"></i></button>' +
+            '<button class="RoleOfedit btn btn-sm btn-default me-1 edit-btn" onclick="update(' + row.menuId + "," + row.parentId + "," + row.orderNum + ',\'' + row.url + '\',\'' + row.target + '\',\'' + row.menuType + '\',\'' + row.icon + '\',\'' + row.parentName + '\',\'' + row.menuName + '\')"  title="编辑" data-bs-toggle="tooltip" id="modify"><i class="mdi mdi-pencil"></i></button>' +
+            '<button class="RoleOfdelete btn btn-sm btn-default" title="删除" id="remove" onclick="removeMenu(' + row.menuId + ')" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>'
+        ].join('');
+    }
+    // 格式化状态
+    function statusFormatter(value, row, index) {
+        var value = "";
+        if (row.visible == '0') {
+            value = 'checked';
+        } else if (row.visible == '1') {
+            value = '';
+        }
+        return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+    }
+
+
+    function update(menuId, parentId, orderNum, url, target, menuType, icon, parentName, menuName) {
+        $('#newsModal').find('.modal-title span').text('菜单编辑');
+        newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        console.log(menuType)
+        if (menuType == "M") {
+            $("#m").prop("checked", 'checked')
+        } else if (menuType == "C") {
+            $("#c").prop("checked", 'checked')
+        } else if (menuType == "F") {
+            $("#f").prop("checked", 'checked')
+        }
+        $("#pMenuName").val(parentName),
+            $("#menuId").val(menuId),
+            $("#pMenuId").val(parentId),
+            $("#orderNum").val(orderNum),
+            $("#url").val(url),
+            $("#target").val(target),
+            $("#icon").val(icon),
+            $("#menuName").val(menuName);
+        // $("#pMenuName").val(menuName);
+        // $("#pMenuId").val(menuId);
+        newsModal.show();
+    }
+</script>
+
+<!-- 部门树弹框逻辑 -->
+<script type="text/javascript">
+    var menuName = '';
+    function menuZtree() {
+        $('#menu-tree').jstree({
+            'core': {
+                'themes': {
+                    'responsive': false
+                },
+                'check_callback': true,
+                'data': function (obj, callback) {
+                    $.ajax({
+                        url: baseUrl + "/admin/sys/menu/all/ztree",
+                        type: "GET",
+                        headers: { 'Authorization': token },
+                        success: function (data) {
+                            var arrays = data.data;
+                            var menuData = buildData(arrays, true);
+                            callback.call(this, menuData);
+                        },
+                        error: function (data) {
+                            responseError(data);
+                        }
+                    });
+                }
+            },
+        }).on('select_node.jstree', function (e, data) {
+            menuName = data.node.text;
+            $("#pMenuId").val(data.node.id)
+        })
+    }
+
+    // $('#menu-tree').on("ready.jstree", function (e, data) {
+    //     // 默认关闭/收起宣布
+    //     $('#menu-tree').jstree().close_all();
+    // });
+
+    function cropMenu() {
+        this.$triggerBtn = $('#pMenuName');                            // 上传按钮
+        this.$menuModal = $('#menuModal');                            // 弹出框
+        this.init();
+    }
+    cropMenu.prototype = {
+        constructor: cropMenu,
+        init: function () {
+            this.initModal();
+            this.addListener();
+        },
+        initModal: function () {
+            this.$menuModal.modal({
+                show: false
+            });
+        },
+        addListener: function () {
+            this.$triggerBtn.on('click', $.proxy(this.click, this));
+        },
+        click: function (e) {
+            this.$menuModal.modal('show');
+        },
+        hideModal: function () {
+            this.$menuModal.modal('hide');
+        }
+    };
+
+    $(document).ready(function () {
+        new cropMenu();
+    });
+
+    $(document).on('click', '.close-btn-menu', function () {
+        new cropMenu().hideModal();
+    });
+    $(document).on('click', '.save-btn-menu', function () {
+        $("#pMenuName").val(menuName)
+        new cropMenu().hideModal();
+    });
+
+
+    function buildData(data, bool) {
+        var str = [];
+        $.each(data, function (index, domEle) {
+            if (bool = true) {
+                var subChildren = obtainSubChildren(domEle);
+                var arr = {
+                    "id": domEle.menuId,
+                    "text": domEle.menuName,
+                    "children": subChildren,
+                    "icon": "mdi mdi-folder-outline",
+                }
+            } else {
+                var arr = domEle.menuId;
+            }
+            str.push(arr);
+        })
+        return str;
+    }
+
+    function obtainSubChildren(domEle) {
+        var str = [];
+        if (domEle.children != '') {
+            $.each(domEle.children, function (index, subDomEle) {
+                var arr = {
+                    "id": subDomEle.menuId,
+                    "text": subDomEle.menuName,
+                    "children": obtainSubChildren(subDomEle),
+                    "icon": "mdi mdi-folder-outline",
+                    "state": { "opened": true }
+                }
+                str.push(arr);
+            })
+        }
+        return str
+    }
+
+</script>
+<script type="text/javascript">
+    function removeMenu(menuId) {
+        $.confirm({
+            title: '菜单删除',
+            content: '确认要删除该条菜单吗?',
+            icon: 'mdi mdi-comment-question',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '继续',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        $.confirm({
+                            title: '该数据也许很关键',
+                            content: '该数据删除后不可恢复，再次确认是否删除?',
+                            icon: 'mdi mdi-alert',
+                            animation: 'scale',
+                            closeAnimation: 'zoom',
+                            buttons: {
+                                confirm: {
+                                    text: '是的',
+                                    btnClass: 'btn-orange',
+                                    action: function () {
+                                        $.ajax({
+                                            url: baseUrl + "/admin/sys/menu/remove?menuId=" + menuId,
+                                            type: "GET",
+                                            headers: { 'Authorization': token },
+                                            success: function (data) {
+                                                loadData()
+                                            },
+                                            error: function (data) {
+                                                responseError(data);
+                                            }
+                                        });
+                                    }
+                                },
+                                '取消': function () {
+                                }
+                            }
+                        });
+                    }
+                },
+                '取消': function () {
+                },
+            }
+        });
+    }
+</script>
+
+</html>

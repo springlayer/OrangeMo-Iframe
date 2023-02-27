@@ -299,29 +299,25 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="deptModal">
-		<div class="modal-dialog modal-lg">
+	<div class="modal fade" id="deptModal" tabindex="-1" aria-labelledby="deptModal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h6 class="modal-title" id="image-modal-label">组织机构</h6>
+					<h6 class="modal-title" id="deptModal">组织机构</h6>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="card-body">
+				<div class="modal-body">
 					<div id="dept-tree"></div>
 				</div>
-				<div class="modal-body">
-					<div class="image-body">
-						<div class="modal-footer">
-							<input type="hidden" name="id" id="news_id" value="" />
-							<button type="button" class="btn btn-secondary close-btn-dept"
-								aria-label="Close">关闭</button>
-							<button type="submit" class="btn btn-primary save-btn-dept">确定</button>
-						</div>
-					</div>
+				<div class="modal-footer">
+					<input type="hidden" name="id" id="news_id" value="" />
+					<button type="button" class="btn btn-secondary close-btn-dept" aria-label="Close">关闭</button>
+					<button type="submit" class="btn btn-primary save-btn-dept">确定</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	</div>
 	</div>
 
@@ -866,7 +862,6 @@
 						});
 					},
 					success: function (data) {
-						console.log(data)
 						if ($.isPlainObject(data) && data.code === 200) {
 							// _this.$imageText.val(data.data.fileUrl);
 							$("#avatar").attr("src", data.data.fileUrl)
@@ -876,7 +871,6 @@
 						}
 					},
 					error: function (XMLHttpRequest, textStatus, errorThrown) {
-						console.log(textStatus);
 					},
 					complete: function () {
 						_this.$uploadBtn.prop('disabled', false);
