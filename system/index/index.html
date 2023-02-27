@@ -395,10 +395,10 @@
           str += "</li>";
         } else {
           if (domEle.target == "menuBlank") {
-            str += "<li class='nav-item active'><a href = '" + domEle.url + "' target='_blank' id = 'default-page' > <i class='mdi mdi-home-city-outline'></i><span> " + domEle.menuName + "</span></a >"
+            str += "<li class='nav-item active'><a href = '" + domEle.url + "' target='_blank' id = 'default-page' > <i class='" + domEle.icon + "'></i><span> " + domEle.menuName + "</span></a >"
             str += "</li>";
           } else {
-            str += "<li class='nav-item active'><a class='multitabs' href = '" + domEle.url + "' id = 'default-page' > <i class='mdi mdi-home-city-outline'></i><span> " + domEle.menuName + "</span></a >"
+            str += "<li class='nav-item active'><a class='multitabs' href = '" + domEle.url + "' id = 'default-page' > <i class='" + domEle.icon + "'></i><span> " + domEle.menuName + "</span></a >"
             str += "</li>";
           }
         }
