@@ -208,11 +208,6 @@ if (typeof jQuery === "undefined") {
                 this.active($navTab);
                 return this;
             }
-            var urlArr=param.url?.split('?');
-            if (urlArr?.length == 2) {
-                var $navTab1 = this.$element.navPanelList.find('a[data-url^="' + urlArr[0] + '"]:first');
-                this.close($navTab1);
-            }
             param.active = !param.active ? active : param.active;
             //nav tab create
             $navTab = this._createNavTab(param);
@@ -803,14 +798,9 @@ if (typeof jQuery === "undefined") {
                       var tempTabPane = $($tabPane);
                       
                       if (tempTabPane.is('iframe')) {
-                          var activeTab = $el.navPanelList.find('li a.active');
-                          if (activeTab.data('id') == param.did) {
-                              $('#lyear-loading').fadeIn('fast', function () {
-                                  tempTabPane.attr('src', param.url);
-                              });
-                          } else {
+                          $('#lyear-loading').fadeIn('fast', function () {
                               tempTabPane.attr('src', param.url);
-                          }
+                          });
                       } else {
                           $.ajax({
                               url: param.url,
