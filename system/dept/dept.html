@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="../../css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../css/style.min.css">
+    <link rel="stylesheet" href="../../js/bootstrap-table/bootstrap-table.min.css">
+    <link rel="stylesheet" type="text/css" href="../../jstree/style.min.css">
+    <link rel="stylesheet" href="../../js/bootstrap-treegrid/jquery.treegrid.min.css">
+    <link rel="stylesheet" type="text/css" href="../../js/jquery-confirm/jquery-confirm.min.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <header class="card-header">
+                        <div class="card-title">部门管理</div>
+                    </header>
+                    <div class="card-body">
+                        <div id="toolbar" class="toolbar-btn-action">
+                            <button id="add-btn" id="init-parentName" type="button" class="btn btn-primary me-1">
+                                <span class="mdi mdi-plus" aria-hidden="true"></span> 新增
+                            </button>
+                            <button id="status" value="false" type="button" class="btn btn-success" onclick="zhedie()">
+                                <span class="mdi mdi-align-horizontal-distribute" aria-hidden="true"></span>折叠
+                            </button>
+                        </div>
+                        <table id="table"></table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--Start 模态框-->
+    <div class="modal fade" id="newsModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <form action="/news/save" method="post" class="save-form" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span>部门新增</span></h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label for="type" class="form-label">所属部门</label>
+                                        <input type="text" class="form-control" id="pDeptName" name="pName" value=""
+                                            onclick="deptZtree()" style="cursor: pointer;background-color: #cfcdcd;" />
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="title" class="form-label">部门名称</label>
+                                        <input type="text" class="form-control" id="deptName" name="deptName"
+                                            placeholder="请输入部门名称" required />
+                                        <div class="invalid-feedback">请填写部门名称</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label for="title" class="form-label">部门负责人</label>
+                                        <input type="text" class="form-control" id="leader" name="leader"
+                                            placeholder="请填写部门负责人" />
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="title" class="form-label">负责人手机号</label>
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                            placeholder="请填写部门负责人手机号" />
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label for="seo_keywords" class="form-label">显示顺序</label>
+                                        <input type="text" class="form-control" id="orderNum" name="orderNum" value=""
+                                            placeholder="请填写显示顺序" required />
+                                        <div class="invalid-feedback">请填写显示顺序</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <input type="hidden" name="id" id="news_id" value="" />
+                    <button type="button" class="btn btn-secondary close-btn">关闭</button>
+                    <button type="submit" class="btn btn-primary save-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deptModal" tabindex="-1" aria-labelledby="deptModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="deptModal">选择部门</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="dept-tree">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="id" id="news_id" value="" />
+                    <button type="button" class="btn btn-secondary close-btn-dept" aria-label="Close">关闭</button>
+                    <button type="submit" class="btn btn-primary save-btn-dept">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="pDeptId">
+    <input type="hidden" id="deptId">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/popper.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/main.min.js"></script>
+    <script src="../../js/globalConfig.js" type="text/javascript"></script>
+    <script src="../../jstree/jstree.min.js"></script>
+    <script type="text/javascript" src="../../js/lyear-loading.js"></script>
+    <script src="../../js/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="../../js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../../js/bootstrap-treegrid/jquery.treegrid.min.js"></script>
+    <script src="../../js/bootstrap-treegrid/bootstrap-table-treegrid.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-notify.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery-confirm/jquery-confirm.min.js"></script>
+</body>
+<script type="text/javascript">
+
+    var newsModal; // 模态框
+
+    /**
+     * 绑定模态框隐藏事件
+     */
+    $('#newsModal').get(0).addEventListener('hidden.bs.modal', function (event) {
+        $('.save-form').removeClass('was-validated');
+        $('.save-form').get(0).reset();
+        $('#news_id').val("");
+    })
+
+    /**
+     * 新增按钮
+     */
+    $(document).on('click', '#add-btn', function () {
+        $('#newsModal').find('.modal-title span').text('部门新增');
+        $("#pMenuId").val(0);
+        newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        $.ajax({
+            url: baseUrl + "/admin/sys/dept/treeData",
+            type: "GET",
+            headers: { 'Authorization': token },
+            success: function (data) {
+                var arrays = data.data;
+                $.each(arrays, function (index, domEle) {
+                    if (domEle.parentId == 0) {
+                        $("#pDeptName").val(domEle.text)
+                        $("#pDeptId").val(domEle.id);
+                    }
+                })
+                callback.call(this, deptData);
+            },
+            error: function (data) {
+                responseError(data);
+            }
+        });
+        newsModal.show();
+    });
+
+    /**
+    * 关闭按钮
+    */
+    $(document).on('click', '.close-btn', function () {
+        newsModal.hide();
+    });
+
+    function add(deptId, deptName) {
+        $('#newsModal').find('.modal-title span').text('部门新增');
+        newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        $("#pDeptName").val(deptName);
+        $("#pDeptId").val(deptId);
+        newsModal.show();
+    }
+
+
+    $(document).on('click', '.save-btn', function (event) {
+        var form = $('.save-form');
+        var self = $(this);
+
+        // 这里只做不为空的验证
+        form.get(0).classList.add('was-validated');
+        if (!form.get(0).checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+        // self.attr('autocomplete', 'off').prop('disabled', true);
+        var loader = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg'
+        });
+
+        var params = {
+            deptId: $("#deptId").val(),
+            deptName: $("#deptName").val(),
+            parentId: $("#pDeptId").val(),
+            leader: $("#leader").val(),
+            phone: $("#phone").val(),
+            orderNum: $("#orderNum").val(),
+        }
+
+        $.ajax({
+            url: baseUrl + "/admin/sys/dept/createOrUpdate",
+            type: "POST",
+            data: JSON.stringify(params),
+            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+            success: function (data) {
+                loader.destroy();
+                loadData();
+                newsModal.hide();
+            },
+            error: function (data) {
+                loader.destroy();
+                responseError(data);
+            }
+        });
+    });
+
+    var $table = $('#table');
+    $(function () {
+        loadData();
+    })
+
+    function loadData() {
+        $.ajax({
+            url: baseUrl + "/admin/sys/dept/list",
+            type: "GET",
+            headers: { 'Authorization': token },
+            success: function (data) {
+                loadTable(data.data);
+            },
+            error: function (data) {
+                responseError(data);
+            }
+        });
+    }
+
+    function loadTable(data) {
+        $table.bootstrapTable('destroy');
+        $table.bootstrapTable({
+            data: data,
+            idField: 'deptId',
+            classes: 'table table-hover',
+            dataType: 'jsonp',
+            singleSelect: true,
+            columns: [
+                {
+                    radio: true
+                },
+                // { field: 'menuId', title: '编号' },
+                { field: 'deptName', title: '名称' },
+                // { field: 'parentId', title: '所属上级' },
+                { field: 'status', title: '状态', sortable: true, formatter: 'statusFormatter' },
+                { field: 'leader', title: '负责人' },
+                { field: 'phone', title: '负责人手机号' },
+                { field: 'operate', title: '操作', align: 'center', formatter: 'operateFormatter' },
+            ],
+            // bootstrap-table-treegrid.js 插件配置 -- start
+            //在哪一列展开树形
+            treeShowField: 'deptName',
+            //指定父id列
+            parentIdField: 'parentId',
+
+            onResetView: function (data) {
+                $table.treegrid({
+                    initialState: 'collapsed',// 所有节点都折叠
+                    treeColumn: 1,
+                });
+                //只展开树形的第一级节点
+                $table.treegrid('getRootNodes').treegrid('expand');
+            },
+            onClickRow: function (row, $element) {
+                console.log($element[0].firstElementChild.firstElementChild.click);
+                $element[0].firstElementChild.firstElementChild.click();
+            },
+            // bootstrap-table-treetreegrid.js 插件配置 -- end
+        });
+    };
+
+    function zhedie() {
+        var status = $("#status").val();
+        console.log(status)
+        if (status == "false") {
+            $table.treegrid({
+                initialState: 'expanded',// 所有节点都展开，默认展开
+                treeColumn: 1,
+            });
+            $("#status").val("true");
+        } else if (status == "true") {
+            $table.treegrid({
+                initialState: 'collapsed',// 所有节点都折叠
+                treeColumn: 1,
+            });
+            $("#status").val("false");
+        }
+    };
+    // 格式化按钮
+    function operateFormatter(value, row, index) {
+        if (row.parentId != 0) {
+            return [
+                '<button class="RoleOfadd btn btn-sm btn-default me-1 add-btn" onclick="add(' + row.deptId + ',\'' + row.deptName + '\')" title="新增" data-bs-toggle="tooltip" id="add"><i class="mdi mdi-plus-thick"></i></button>' +
+                '<button class="RoleOfedit btn btn-sm btn-default me-1 edit-btn" onclick="update(' + row.deptId + "," + row.parentId + "," + row.orderNum + ',\'' + row.leader + '\',\'' + row.deptName + '\',\'' + row.parentName + '\',\'' + row.phone + '\')"  title="编辑" data-bs-toggle="tooltip" id="modify"><i class="mdi mdi-pencil"></i></button>' +
+                '<button class="RoleOfdelete btn btn-sm btn-default" title="删除" id="remove" onclick="removeDept(' + row.deptId + ')" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>'
+            ].join('');
+        }
+    }
+    // 格式化状态
+    function statusFormatter(value, row, index) {
+        var value = "";
+        if (row.status == '1') {
+            value = 'checked';
+        } else if (row.visible == '0') {
+            value = '';
+        }
+        return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+    }
+
+
+    function update(deptId, parentId, orderNum, leader, deptName, parentName, phone) {
+        $('#newsModal').find('.modal-title span').text('部门编辑');
+        newsModal = new bootstrap.Modal($('#newsModal').get(0), {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        $("#pDeptName").val(parentName),
+            $("#deptId").val(deptId),
+            $("#pDeptId").val(parentId),
+            $("#orderNum").val(orderNum),
+            $("#leader").val(leader),
+            $("#deptName").val(deptName),
+            $("#phone").val(phone),
+            newsModal.show();
+    }
+</script>
+
+<!-- 部门树弹框逻辑 -->
+<script type="text/javascript">
+    var deptName = '';
+    function deptZtree() {
+        $('#dept-tree').jstree({
+            'core': {
+                'themes': {
+                    'responsive': false
+                },
+                'check_callback': true,
+                'data': function (obj, callback) {
+                    $.ajax({
+                        url: baseUrl + "/admin/sys/dept/treeData",
+                        type: "GET",
+                        headers: { 'Authorization': token },
+                        success: function (data) {
+                            var arrays = data.data;
+                            var deptData = buildData(arrays, true);
+                            callback.call(this, deptData);
+                        },
+                        error: function (data) {
+                            responseError(data);
+                        }
+                    });
+                }
+            },
+        }).on('select_node.jstree', function (e, data) {
+            deptName = data.node.text;
+            $("#pDeptId").val(data.node.id)
+        })
+    }
+
+    $('#dept-tree').on("ready.jstree", function (e, data) {
+        // 默认关闭/收起宣布
+        $('#dept-tree').jstree().open_all();
+    });
+
+    function cropDept() {
+        this.$triggerBtn = $('#pDeptName');                            // 上传按钮
+        this.$deptModal = $('#deptModal');                            // 弹出框
+        this.init();
+    }
+    cropDept.prototype = {
+        constructor: cropDept,
+        init: function () {
+            this.initModal();
+            this.addListener();
+        },
+        initModal: function () {
+            this.$deptModal.modal({
+                show: false
+            });
+        },
+        addListener: function () {
+            this.$triggerBtn.on('click', $.proxy(this.click, this));
+        },
+        click: function (e) {
+            this.$deptModal.modal('show');
+        },
+        hideModal: function () {
+            this.$deptModal.modal('hide');
+        }
+
+    };
+
+    $(document).ready(function () {
+        new cropDept();
+    });
+
+    $(document).on('click', '.close-btn-dept', function () {
+        new cropDept().hideModal();
+    });
+    $(document).on('click', '.save-btn-dept', function () {
+        $("#pDeptName").val(deptName)
+        new cropDept().hideModal();
+    });
+
+
+    function buildData(data, bool) {
+        var str = [];
+        $.each(data, function (index, domEle) {
+            if (bool = true) {
+                var subChildren = obtainSubChildren(domEle);
+                var arr = {
+                    "id": domEle.id,
+                    "text": domEle.text,
+                    "children": subChildren,
+                    "icon": "mdi mdi-folder-outline",
+                }
+            } else {
+                var arr = domEle.deptId;
+            }
+            str.push(arr);
+        })
+        return str;
+    }
+
+    function obtainSubChildren(domEle) {
+        var str = [];
+        if (domEle.children != '') {
+            $.each(domEle.children, function (index, subDomEle) {
+                var arr = {
+                    "id": subDomEle.id,
+                    "text": subDomEle.text,
+                    "children": obtainSubChildren(subDomEle),
+                    "icon": "mdi mdi-folder-outline",
+                    "state": { "opened": true }
+                }
+                str.push(arr);
+            })
+        }
+        return str
+    }
+
+</script>
+<script type="text/javascript">
+    function removeDept(deptId) {
+        $.confirm({
+            title: '部门删除',
+            content: '确认要删除该条部门吗?',
+            icon: 'mdi mdi-comment-question',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '继续',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        $.confirm({
+                            title: '该数据也许很关键',
+                            content: '该数据删除后不可恢复，再次确认是否删除?',
+                            icon: 'mdi mdi-alert',
+                            animation: 'scale',
+                            closeAnimation: 'zoom',
+                            buttons: {
+                                confirm: {
+                                    text: '是的',
+                                    btnClass: 'btn-orange',
+                                    action: function () {
+                                        $.ajax({
+                                            url: baseUrl + "/admin/sys/dept/remove?deptId=" + deptId,
+                                            type: "GET",
+                                            headers: { 'Authorization': token },
+                                            success: function (data) {
+                                                loadData()
+                                            },
+                                            error: function (data) {
+                                                responseError(data);
+                                            }
+                                        });
+                                    }
+                                },
+                                '取消': function () {
+                                }
+                            }
+                        });
+                    }
+                },
+                '取消': function () {
+                },
+            }
+        });
+    }
+</script>
+
+</html>
