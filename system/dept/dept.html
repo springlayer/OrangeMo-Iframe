@@ -197,6 +197,7 @@
         });
         $("#pDeptName").val(deptName);
         $("#pDeptId").val(deptId);
+        $("#deptId").val();
         newsModal.show();
     }
 
@@ -255,6 +256,7 @@
             type: "GET",
             headers: { 'Authorization': token },
             success: function (data) {
+                console.log(data)
                 loadTable(data.data);
             },
             error: function (data) {
@@ -365,6 +367,7 @@
 <script type="text/javascript">
     var deptName = '';
     function deptZtree() {
+        $('#dept-tree').jstree('destroy');
         $('#dept-tree').jstree({
             'core': {
                 'themes': {
@@ -391,12 +394,11 @@
             deptName = data.node.text;
             $("#pDeptId").val(data.node.id)
         })
+        $('#dept-tree').on("ready.jstree", function (e, data) {
+            // 默认关闭/收起宣布
+            $('#dept-tree').jstree().open_all();
+        });
     }
-
-    $('#dept-tree').on("ready.jstree", function (e, data) {
-        // 默认关闭/收起宣布
-        $('#dept-tree').jstree().open_all();
-    });
 
     function cropDept() {
         this.$triggerBtn = $('#pDeptName');                            // 上传按钮
