@@ -159,6 +159,16 @@
 						value = '<span class="badge rounded-pill bg-purple">编辑</span>';
 					} else if (row.businessType == '3') {
 						value = '<span class="badge rounded-pill bg-pink">删除</span>';
+					} else if (row.businessType == '4') {
+						value = '<span class="badge rounded-pill bg-primary">授权</span>';
+					} else if (row.businessType == '5') {
+						value = '<span class="badge rounded-pill bg-secondary">导出</span>';
+					} else if (row.businessType == '6') {
+						value = '<span class="badge rounded-pill bg-warning">导入</span>';
+					} else if (row.businessType == '7') {
+						value = '<span class="badge rounded-pill bg-danger">强退</span>';
+					} else if (row.businessType == '8') {
+						value = '<span class="badge rounded-pill bg-success">查询</span>';
 					}
 					return value;
 				}

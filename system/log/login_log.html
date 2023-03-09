@@ -167,9 +167,9 @@
 			}, {
 				field: 'status', align: 'center', title: '参数类型', formatter: function (value, row, index) {
 					var value = "";
-					if (row.status == '1') {
+					if (row.status == '0') {
 						value = '<span class="badge rounded-pill bg-danger">失败</span>';
-					} else if (row.status == '0') {
+					} else if (row.status == '1') {
 						value = '<span class="badge rounded-pill bg-success">成功</span>';
 					}
 					return value;

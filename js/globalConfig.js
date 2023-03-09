@@ -1,5 +1,5 @@
-// var baseUrl = "http://42.192.200.234:8081"
-var baseUrl = "http://localhost:8080"
+// var baseUrl = "http://43.140.246.157:9090"
+var baseUrl = "http://localhost:9090"
 var token = localStorage.getItem("token");
 
 function responseError(data) {
