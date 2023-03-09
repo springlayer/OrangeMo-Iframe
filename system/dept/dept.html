@@ -342,9 +342,28 @@
         } else if (row.visible == '0') {
             value = '';
         }
-        return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+        return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch"  onclick="checkEvent(' + row.deptId + ',' + row.status + ')" id="flexSwitchCheckChecked" ' + value + '> </div>';
     }
 
+    function checkEvent(deptId, status) {
+        var newstatus = '';
+        if (status == "1") {
+            newstatus = "0"
+        } else if (status == "0") {
+            newstatus = "1"
+        }
+        $.ajax({
+            url: baseUrl + "/admin/sys/dept/modify/status?deptId=" + deptId + "&status=" + newstatus,
+            type: "GET",
+            headers: { 'Authorization': token },
+            success: function (data) {
+                $('#table').bootstrapTable('refresh');
+            },
+            error: function (data) {
+                responseError(data);
+            }
+        });
+    }
 
     function update(deptId, parentId, orderNum, leader, deptName, parentName, phone) {
         $('#newsModal').find('.modal-title span').text('部门编辑');

@@ -412,7 +412,7 @@
 					} else if (row.status == '0') {
 						value = '';
 					}
-					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox"  onclick="checkEvent(' + row.roleId + ',' + row.status + ')" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
 				}
 			}, {
 				field: 'operate',
@@ -440,12 +440,13 @@
 				}
 			}];
 
+
 			// 自定义操作按钮
 			function btnGroup(val, row) {
 				let html =
 					'<button  class="btn btn-sm btn-default me-1 edit-btn" title="编辑" data-bs-toggle="tooltip"><i class="mdi mdi-pencil"></i></button>' +
 					'<button  class="btn btn-sm btn-default me-1 acl-btn" title="角色授权" data-bs-toggle="tooltip"><i class="mdi mdi-axe-battle"></i></button>' +
-					'<button  class="btn btn-sm btn-default me-1 acl-user-btn" id="js-create-tab" data-title="角色人员" data-url="/system/acl/aclUser.html?id=' + row.roleId + '" title="角色人员" data-bs-toggle="tooltip"><i class="mdi mdi-account-wrench"></i></button>' +
+					'<button  class="btn btn-sm btn-default me-1 acl-user-btn" id="js-create-tab" data-title="角色人员" data-url="' + dataUrlPrefix + '/system/acl/aclUser.html?id=' + row.roleId + '" title="角色人员" data-bs-toggle="tooltip"><i class="mdi mdi-account-wrench"></i></button>' +
 					'<button  class="btn btn-sm btn-default" title="删除" id="remove-btn" onclick="removeRole()" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>';
 				return html;
 			}
@@ -553,6 +554,27 @@
 				}
 			});
 		}
+
+		function checkEvent(roleId, status) {
+			var newstatus = '';
+			if (status == "1") {
+				newstatus = "0"
+			} else if (status == "0") {
+				newstatus = "1"
+			}
+			$.ajax({
+				url: baseUrl + "/admin/sys/role/modify/status?roleId=" + roleId + "&status=" + newstatus,
+				type: "GET",
+				headers: { 'Authorization': token },
+				success: function (data) {
+					$('#table').bootstrapTable('refresh');
+				},
+				error: function (data) {
+					responseError(data);
+				}
+			});
+		}
+
 		/**
 			* 关闭按钮
 		*/

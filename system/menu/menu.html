@@ -381,9 +381,28 @@
         } else if (row.visible == '1') {
             value = '';
         }
-        return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+        return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" onclick="checkEvent(' + row.menuId + ',' + row.visible + ')"  role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
     }
 
+    function checkEvent(menuId, visible) {
+        var newstatus = '';
+        if (visible == "1") {
+            newstatus = "0"
+        } else if (visible == "0") {
+            newstatus = "1"
+        }
+        $.ajax({
+            url: baseUrl + "/admin/sys/menu/modify/status?menuId=" + menuId + "&status=" + newstatus,
+            type: "GET",
+            headers: { 'Authorization': token },
+            success: function (data) {
+                $('#table').bootstrapTable('refresh');
+            },
+            error: function (data) {
+                responseError(data);
+            }
+        });
+    }
 
     function update(menuId, parentId, orderNum, url, target, menuType, icon, parentName, menuName) {
         $('#newsModal').find('.modal-title span').text('菜单编辑');

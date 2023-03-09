@@ -296,7 +296,7 @@
 					} else if (row.status == '0') {
 						value = '';
 					}
-					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox"  onclick="checkEvent(' + row.dictId + ',' + row.status + ')" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
 				}
 			}, {
 				field: 'operate',
@@ -315,7 +315,7 @@
 			function btnGroup(val, row) {
 				let html =
 					'<button  class="btn btn-sm btn-default me-1 edit-btn" title="编辑" data-bs-toggle="tooltip"><i class="mdi mdi-pencil"></i></button>' +
-					'<button  class="btn btn-sm btn-default me-1" id="js-create-tab" data-title="字典标签" data-url="/system/dict/dict_data_list.html?id=' + row.dictType + '" title="标签" data-bs-toggle="tooltip"><i class="mdi mdi-format-align-center"></i></button>' +
+					'<button  class="btn btn-sm btn-default me-1" id="js-create-tab" data-title="字典标签" data-url="' + dataUrlPrefix + '/system/dict/dict_data_list.html?id=' + row.dictType + '" title="标签" data-bs-toggle="tooltip"><i class="mdi mdi-format-align-center"></i></button>' +
 					'<button  class="btn btn-sm btn-default" title="删除" id="remove-btn" onclick="removeDict(' + row.dictId + ')" data-bs-toggle="tooltip"><i class="mdi mdi-window-close"></i></button>';
 				return html;
 			}
@@ -420,6 +420,26 @@
 				columns,
 				onLoadSuccess: function (data) {
 					$("[data-bs-toggle='tooltip']").tooltip();
+				}
+			});
+		}
+
+		function checkEvent(dictId, status) {
+			var newstatus = '';
+			if (status == "1") {
+				newstatus = "0"
+			} else if (status == "0") {
+				newstatus = "1"
+			}
+			$.ajax({
+				url: baseUrl + "/admin/sys/dict/modify/status?dictId=" + dictId + "&status=" + newstatus,
+				type: "GET",
+				headers: { 'Authorization': token },
+				success: function (data) {
+					$('#table').bootstrapTable('refresh');
+				},
+				error: function (data) {
+					responseError(data);
 				}
 			});
 		}

@@ -524,12 +524,12 @@
 				title: '状态',
 				formatter: function (value, row, index) {
 					var value = "";
-					if (row.status == '0') {
+					if (row.status == '1') {
 						value = 'checked';
-					} else if (row.status == '1') {
+					} else if (row.status == '0') {
 						value = '';
 					}
-					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" onclick="checkEvent(' + row.userId + ',' + row.status + ')" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
 				}
 			}, {
 				field: 'operate',
@@ -650,6 +650,26 @@
 				columns,
 				onLoadSuccess: function (data) {
 					$("[data-bs-toggle='tooltip']").tooltip();
+				}
+			});
+		}
+
+		function checkEvent(userId, status) {
+			var newstatus = '';
+			if (status == "1") {
+				newstatus = "0"
+			} else if (status == "0") {
+				newstatus = "1"
+			}
+			$.ajax({
+				url: baseUrl + "/admin/sys/user//modify/status?userId=" + userId + "&status=" + newstatus,
+				type: "GET",
+				headers: { 'Authorization': token },
+				success: function (data) {
+					$('#table').bootstrapTable('refresh');
+				},
+				error: function (data) {
+					responseError(data);
 				}
 			});
 		}

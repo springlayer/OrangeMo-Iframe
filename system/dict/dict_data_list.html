@@ -325,7 +325,7 @@
 					} else if (row.status == '0') {
 						value = '';
 					}
-					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
+					return '<div class="form-check form-switch"> <input class="form-check-input" type="checkbox"  onclick="checkEvent(' + row.dictCode + ',' + row.status + ')" role="switch" id="flexSwitchCheckChecked" ' + value + '> </div>';
 				}
 			}, {
 				field: 'operate',
@@ -448,6 +448,26 @@
 				columns,
 				onLoadSuccess: function (data) {
 					$("[data-bs-toggle='tooltip']").tooltip();
+				}
+			});
+		}
+
+		function checkEvent(dictCode, status) {
+			var newstatus = '';
+			if (status == "1") {
+				newstatus = "0"
+			} else if (status == "0") {
+				newstatus = "1"
+			}
+			$.ajax({
+				url: baseUrl + "/admin/sys/dict/data/modify/status?dictCode=" + dictCode + "&status=" + newstatus,
+				type: "GET",
+				headers: { 'Authorization': token },
+				success: function (data) {
+					$('#table').bootstrapTable('refresh');
+				},
+				error: function (data) {
+					responseError(data);
 				}
 			});
 		}
